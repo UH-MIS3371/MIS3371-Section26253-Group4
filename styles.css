@@ -62,13 +62,14 @@ label {
 }
 
 input,
+select,
 textarea {
-  width: 100%;
-  padding: 10px 12px;
-  font: inherit;
-  border: 1px solid #BFC4CA;
-  border-radius: 6px;
-  background: #FFFFFF;
+    width: 100%;
+    padding: 10px 12px;
+    font: inherit;
+    border: 1px solid #BFC4CA;
+    border-radius: 6px;
+    background: #FFFFFF;
 }
 
 textarea {
@@ -86,9 +87,37 @@ button {
   cursor: pointer;
 }
 
+/* Make keyboard focus clearly visible. */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: 3px solid #353f59;
+  outline-offset: 2px;
+}
+
 .site-footer {
   margin-top: 32px;
   color: #676B72;
   background: #FFFFFF;
   border-top: 1px solid #E4E5E7;
+}
+
+/* Adjust the layout for smaller screens. */
+@media (max-width: 600px) {
+    .page-shell {
+        padding: 16px;
+    }
+
+    form {
+        padding: 16px;
+    }
+
+    fieldset {
+        padding: 14px;
+    }
+
+    button {
+        width: 100%;
+    }
 }
