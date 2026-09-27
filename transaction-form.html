@@ -4,97 +4,104 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Checkout | ShelfLife</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <h1>ShelfLife - Book Checkout</h1>
-    <p>Request to check out one physical library book.</p>
-  </header>
+  <div class="page-shell">
+    <header class="site-header">
+      <h1>ShelfLife - Book Checkout</h1>
+      <p>Request to check out one physical library book.</p>
+    </header>
 
-  <main>
-    <section>
-      <h2>Before You Check Out a Book</h2>
-      <p>Please have your reader ID, book barcode or ISBN, and requested checkout date ready. Use fictional reader and book information for demonstrations.</p>
-    </section>
+    <main>
+      <section class="intro-section">
+        <h2>Before You Check Out a Book</h2>
+        <p>Please have your reader ID, book barcode or ISBN, and requested checkout date ready. Use fictional reader and book information for demonstrations.</p>
+      </section>
 
-    <section>
-      <h2>Checkout Details</h2>
-      <p id="required-help">Fields marked (required) must be completed. Books are loaned for five calendar days.</p>
-      <!-- GET retains the classroom submission example. Application submission comes later. -->
-      <form id="checkout-form" method="get" aria-describedby="required-help">
-        <fieldset>
-          <legend>Reader and Book Information</legend>
-          <p>
-            <label for="reader-id">Reader ID (required)</label><br>
-            <!-- Text preserves leading zeros. Record lookup is an application check. -->
-            <input type="text" id="reader-id" name="readerId" required pattern=".*\S.*" title="Enter a reader ID, not just spaces.">
-          </p>
-          <p>
-            <label for="book-id">Book Barcode or ISBN (required)</label><br>
-            <input type="text" id="book-id" name="bookIdentifier" required pattern=".*\S.*" title="Enter a book barcode or ISBN, not just spaces." aria-describedby="book-help">
-            <br><small id="book-help">Scan or enter a barcode, or enter an ISBN. An ISBN must be resolved to one eligible physical copy before checkout.</small>
-          </p>
-          <p>
-            <label for="item-copy-id">Physical Copy ID</label><br>
-            <input type="text" id="item-copy-id" name="itemCopyId" readonly aria-describedby="copy-help">
-            <br><small id="copy-help">Populated from the library catalog after the book is identified.</small>
-          </p>
-          <!-- Later application logic must resolve an existing copy and handle multiple ISBN matches. -->
-        </fieldset>
+      <section>
+        <h2>Checkout Details</h2>
+        <p id="required-help">Fields marked (required) must be completed. Books are loaned for five calendar days.</p>
+        <!-- GET retains the classroom submission example. Application submission comes later. -->
+        <form id="checkout-form" method="get" aria-describedby="required-help">
+          <fieldset>
+            <legend>Reader and Book Information</legend>
+            <div class="form-group">
+              <label for="reader-id">Reader ID (required)</label>
+              <!-- Text preserves leading zeros. Record lookup is an application check. -->
+              <input type="text" id="reader-id" name="readerId" required pattern=".*\S.*" title="Enter a reader ID, not just spaces.">
+            </div>
+            <div class="form-group">
+              <label for="book-id">Book Barcode or ISBN (required)</label>
+              <input type="text" id="book-id" name="bookIdentifier" required pattern=".*\S.*" title="Enter a book barcode or ISBN, not just spaces." aria-describedby="book-help">
+              <small id="book-help">Scan or enter a barcode, or enter an ISBN. An ISBN must be resolved to one eligible physical copy before checkout.</small>
+            </div>
+            <div class="form-group">
+              <label for="item-copy-id">Physical Copy ID</label>
+              <input type="text" id="item-copy-id" name="itemCopyId" readonly aria-describedby="copy-help">
+              <small id="copy-help">Populated from the library catalog after the book is identified.</small>
+            </div>
+            <!-- Later application logic must resolve an existing copy and handle multiple ISBN matches. -->
+          </fieldset>
 
-        <fieldset>
-          <legend>Loan Details</legend>
-          <p>
-            <label for="checkout-date">Requested Checkout Date (required)</label><br>
-            <input type="date" id="checkout-date" name="checkoutDate" required>
-          </p>
-          <p>
-            <label for="due-date">Due Date</label><br>
-            <input type="date" id="due-date" name="dueDate" readonly aria-describedby="due-date-help">
-            <br><small id="due-date-help">Calculated automatically as five calendar days after checkout when application logic is added.</small>
-          </p>
-          <!-- FR-8: readers cannot choose a due date. Readonly fields are not required user inputs. -->
-          <p>
-            <label for="notes">Notes (optional)</label><br>
-            <textarea id="notes" name="notes" rows="4" cols="40"></textarea>
-          </p>
-        </fieldset>
+          <fieldset>
+            <legend>Loan Details</legend>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="checkout-date">Requested Checkout Date (required)</label>
+                <input type="date" id="checkout-date" name="checkoutDate" required>
+              </div>
+              <div class="form-group">
+                <label for="due-date">Due Date</label>
+                <input type="date" id="due-date" name="dueDate" readonly aria-describedby="due-date-help">
+                <small id="due-date-help">Calculated automatically as five calendar days after checkout when application logic is added.</small>
+              </div>
+            </div>
+            <!-- FR-8: readers cannot choose a due date. Readonly fields are not required user inputs. -->
+            <div class="form-group">
+              <label for="notes">Notes (optional)</label>
+              <textarea id="notes" name="notes" rows="4" cols="40"></textarea>
+            </div>
+          </fieldset>
 
-        <p id="override-help">Staff exception handling becomes available after an authorized circulation clerk signs in and a permitted exception is identified.</p>
-        <!-- Enable only in an authorized override workflow. Server authorization is still required.
-             When enabled, both fields are required. Ordinary reader requests omit these fields. -->
-        <fieldset id="staff-override" disabled aria-describedby="override-help">
-          <legend>Staff Exception Handling</legend>
-          <p>
-            <label for="overridden-rules">Affected Rule or Check (required for an override)</label><br>
-            <textarea id="overridden-rules" name="overriddenRules" rows="2" cols="40" required aria-describedby="rules-help"></textarea>
-            <br><small id="rules-help">Identify the permitted check being resolved, such as BR-7 barcode scan resolution. The book must still match an existing physical copy; duplicate loans are never permitted.</small>
-          </p>
-          <p>
-            <label for="override-reason">Exception Resolution Reason (required for an override)</label><br>
-            <textarea id="override-reason" name="overrideReason" rows="4" cols="40" required></textarea>
-          </p>
-          <!-- Later logic rejects whitespace-only reasons and validates permitted rule codes.
-               processedBy and overrideBy come from the authenticated session, never editable IDs. -->
-        </fieldset>
+          <p id="override-help">Staff exception handling becomes available after an authorized circulation clerk signs in and a permitted exception is identified.</p>
+          <!-- Enable only in an authorized override workflow. Server authorization is still required.
+               When enabled, both fields are required. Ordinary reader requests omit these fields. -->
+          <fieldset id="staff-override" disabled aria-describedby="override-help">
+            <legend>Staff Exception Handling</legend>
+            <div class="form-group">
+              <label for="overridden-rules">Affected Rule or Check (required for an override)</label>
+              <textarea id="overridden-rules" name="overriddenRules" rows="2" cols="40" required aria-describedby="rules-help"></textarea>
+              <small id="rules-help">Identify the permitted check being resolved, such as BR-7 barcode scan resolution. The book must still match an existing physical copy; duplicate loans are never permitted.</small>
+            </div>
+            <div class="form-group">
+              <label for="override-reason">Exception Resolution Reason (required for an override)</label>
+              <textarea id="override-reason" name="overrideReason" rows="4" cols="40" required></textarea>
+            </div>
+            <!-- Later logic rejects whitespace-only reasons and validates permitted rule codes.
+                 processedBy and overrideBy come from the authenticated session, never editable IDs. -->
+          </fieldset>
 
-        <p><button type="submit">Submit Checkout Request</button></p>
-      </form>
-    </section>
+          <div class="form-actions">
+            <button type="submit">Submit Checkout Request</button>
+          </div>
+        </form>
+      </section>
 
-    <section aria-labelledby="result-heading">
-      <h2 id="result-heading">Checkout Result</h2>
-      <p id="checkout-result" role="status" aria-live="polite">No checkout has been processed.</p>
-      <!-- Later logic displays the checkout ID, outcome and due date, or a specific rejection reason.
-           The server supplies IDs, authenticated actors, timestamps, and eligibility snapshots.
-           Recheck fines, holds, item restrictions, loan limits and availability at commit time.
-           Save the loan, item update and audit event atomically; prevent concurrent duplicate loans.
-           Do not trust readonly fields or GET parameters as authoritative library records. -->
-    </section>
-  </main>
+      <section aria-labelledby="result-heading">
+        <h2 id="result-heading">Checkout Result</h2>
+        <p id="checkout-result" role="status" aria-live="polite">No checkout has been processed.</p>
+        <!-- Later logic displays the checkout ID, outcome and due date, or a specific rejection reason.
+             The server supplies IDs, authenticated actors, timestamps, and eligibility snapshots.
+             Recheck fines, holds, item restrictions, loan limits and availability at commit time.
+             Save the loan, item update and audit event atomically; prevent concurrent duplicate loans.
+             Do not trust readonly fields or GET parameters as authoritative library records. -->
+      </section>
+    </main>
 
-  <footer>
-    <p>MIS 3371 — Team 4 — ShelfLife</p>
-  </footer>
+    <footer class="site-footer">
+      <p>MIS 3371 — Team 4 — ShelfLife</p>
+    </footer>
+  </div>
 </body>
 </html>
