@@ -20,6 +20,7 @@ body {
 }
 
 .site-header {
+  padding: 16px 0;
   background: #FFFFFF;
   border-bottom: 4px solid #C8102E;
 }
@@ -55,20 +56,46 @@ legend {
   margin-bottom: 18px;
 }
 
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.form-row .form-group {
+  flex: 1 1 220px;
+}
+
+.form-actions {
+  margin-top: 8px;
+}
+
 label {
   display: block;
   margin-bottom: 6px;
   font-weight: 700;
 }
 
+small {
+  display: block;
+  margin-top: 6px;
+  color: #676B72;
+  font-size: 0.85em;
+}
+
+fieldset[disabled] {
+  opacity: 0.6;
+}
+
 input,
+select,
 textarea {
-  width: 100%;
-  padding: 10px 12px;
-  font: inherit;
-  border: 1px solid #BFC4CA;
-  border-radius: 6px;
-  background: #FFFFFF;
+    width: 100%;
+    padding: 10px 12px;
+    font: inherit;
+    border: 1px solid #BFC4CA;
+    border-radius: 6px;
+    background: #FFFFFF;
 }
 
 textarea {
@@ -86,9 +113,43 @@ button {
   cursor: pointer;
 }
 
+/* Make keyboard focus clearly visible. */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+  outline: 3px solid #353f59;
+  outline-offset: 2px;
+}
+
 .site-footer {
   margin-top: 32px;
+  padding: 16px 0;
   color: #676B72;
   background: #FFFFFF;
   border-top: 1px solid #E4E5E7;
+}
+
+/* Adjust the layout for smaller screens. */
+@media (max-width: 600px) {
+    .page-shell {
+        padding: 16px;
+    }
+
+    form {
+        padding: 16px;
+    }
+
+    fieldset {
+        padding: 14px;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    button {
+        width: 100%;
+    }
 }
