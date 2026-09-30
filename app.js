@@ -1,30 +1,49 @@
 
-const FINE_LIMIT = 10.00;
-const MAX_ITEMS = 5;
-const LOAN_DAYS = 5;
+const FINE_LIMIT = 10.00; // BR1 may not checkout if their outstanding fines exceed the library allow fine limit
 
-/*Example transaction amount for testing.
-let expenseAmount = 50;
+/*let outstandingFines = 5.00;
+outstandingFines = 15.00;*/ // session 1
 
-function requiresDirectorApproval(amount) {
-  return amount > DIRECTOR_APPROVAL_THRESHOLD;
+function exceedsFineLimit(amount) {
+    return amount > FINE_LIMIT;
 }
 
-function requiresReceipt(amount) {
-  return amount > RECEIPT_THRESHOLD;
+/*
+const fineLimitExceeded = exceedsFineLimit(outstandingFines); // Example usage
+console.log("Outstanding fines:", outstandingFines);
+console.log("Fine limit exceeded:", fineLimitExceeded);
+*/ //session 1
+
+const fineInput = document.querySelector("#fineInput");
+const fineMessage = document.querySelector("#fineMessage");
+
+function updataFineMessage(){
+  if(fineInput.value === ""){
+    fineMessage.textContent = "Please enter a fine amount.";
+    return;
+  }
+
+  const fines = Number(fineInput.value);
+
+  if (exceedsFineLimit(fines)) {
+    fineMessage.textContent = "Fine limit exceeded.";
+  } else {
+    fineMessage.textContent = "Checkout allowed.";
+  }
 }
 
-const directorApprovalRequired = requiresDirectorApproval(expenseAmount);
-const receiptRequired = requiresReceipt(expenseAmount);
+fineInput.addEventListener("input", updataFineMessage);
+const checkoutForm = document.querySelector("#checkout-form");
 
-console.log('Expense amount:', expenseAmount);
-console.log('Receipt required:', receiptRequired);
-console.log('Director approval required:', directorApprovalRequired);
+function handleDemoCheckout(event) {
+  event.preventDefault();
+  console.log("Checkout form submitted.");
+}
 
-if (directorApprovalRequired) {
-  console.log('Approval path: Manager + Director');
+checkoutForm.addEventListener("submit", handleDemoCheckout);
+
+/*if (fineLimitExceeded) {
+    console.log("Unable to checkout. Outstanding fines must be paid first.");
 } else {
-  console.log('Approval path: Standard manager review');
-}
-
-// Try changing expenseAmount to 50, 250, 5000, and 5600.
+    console.log("Checkout allowed.");
+} // session 1 */
