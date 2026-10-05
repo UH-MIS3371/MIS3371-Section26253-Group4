@@ -5,6 +5,13 @@
   box-sizing: border-box;
 }
 
+main {
+width: 100%;
+max-width: 800px;
+margin: 0 auto;
+padding: 24px;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -14,6 +21,7 @@ body {
 }
 
 .page-shell {
+  width: 100%;
   max-width: 800px;
   margin: 0 auto;
   padding: 24px;
@@ -40,6 +48,18 @@ form {
   border-radius: 10px;
 }
 
+.form-row {
+display: flex;
+gap: 16px;
+align-items: flex-start;
+}
+/* Allow form fields to share available space. */
+
+.form-row .form-group {
+flex: 1 1 0;
+min-width: 0;
+}
+
 fieldset {
   margin: 0 0 24px;
   padding: 20px;
@@ -56,35 +76,10 @@ legend {
   margin-bottom: 18px;
 }
 
-.form-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-}
-
-.form-row .form-group {
-  flex: 1 1 220px;
-}
-
-.form-actions {
-  margin-top: 8px;
-}
-
 label {
   display: block;
   margin-bottom: 6px;
   font-weight: 700;
-}
-
-small {
-  display: block;
-  margin-top: 6px;
-  color: #676B72;
-  font-size: 0.85em;
-}
-
-fieldset[disabled] {
-  opacity: 0.6;
 }
 
 input,
@@ -97,6 +92,15 @@ textarea {
     border-radius: 6px;
     background: #FFFFFF;
 }
+/* Make keyboard focus clearly visible. */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 3px solid #F3A9B8;
+  outline-offset: 2px;
+  border-color: #C8102E;
+}
+
 
 textarea {
   resize: vertical;
@@ -113,13 +117,15 @@ button {
   cursor: pointer;
 }
 
-/* Make keyboard focus clearly visible. */
-input:focus,
-select:focus,
-textarea:focus,
-button:focus {
-  outline: 3px solid #353f59;
-  outline-offset: 2px;
+/* Darken the button slightly when hovered. */
+
+button:hover {
+  filter: brightness(0.92);
+}
+
+button:focus-visible {
+  outline: 3px solid #F3A9B8;
+  outline-offset: 3px;
 }
 
 .site-footer {
@@ -132,24 +138,24 @@ button:focus {
 
 /* Adjust the layout for smaller screens. */
 @media (max-width: 600px) {
-    .page-shell {
-        padding: 16px;
-    }
+  main{
+    padding: 16px;
+  }
+  
+  .page-shell {
+    padding: 16px;
+  }
 
-    form {
-        padding: 16px;
-    }
+  form {
+    padding: 16px;
+  }
 
-    fieldset {
-        padding: 14px;
-    }
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
 
-    .form-row {
-        flex-direction: column;
-        gap: 0;
-    }
-
-    button {
-        width: 100%;
-    }
+  button {
+    width: 100%;
+  }
 }
