@@ -38,3 +38,8 @@ function handleDemoCheckout(event) {
 
 checkoutForm.addEventListener("submit", handleDemoCheckout);
 fineInput.addEventListener("input", updateFineMessage);
+
+//Three tested cases including a boundary
+console.log("9.99 ->", exceedsFineLimit(9.99));   // false: just under the limit
+console.log("10.00 ->", exceedsFineLimit(10.00)); // false: exactly at the limit, allowed
+console.log("10.01 ->", exceedsFineLimit(10.01)); // true: just over, checkout blocked
