@@ -52,9 +52,17 @@ function updateBookStatusMessage() {
 
 function handleDemoCheckout(event) {
   event.preventDefault();
+  if (fineInput.value === "") {
+    fineMessage.textContent = "Please enter a fine amount.";
+    return;
+  }
   const fines = Number(fineInput.value);
   if (exceedsFineLimit(fines)) {
     fineMessage.textContent = "Checkout blocked: fine limit exceeded.";
+    return;
+  }
+  if (!isBookAvailable(bookStatusInput.value)) {
+    bookStatusMessage.textContent = "Checkout blocked: book is not available.";
     return;
   }
   console.log("Checkout form submitted successfully.");
