@@ -18,8 +18,8 @@ ShelfLife is a library checkout transaction system. This repository holds the cl
 
 ## Team and roles
 
-| Team member | Role | Focus area in this project |
-|---|---|---|
+| Team member | Role |
+|---|---|
 | Lana Tran | Requirements / Product Lead |
 | Syed Raza | UI / Accessibility Lead |
 | Casey Nguyen | JavaScript / Logic Lead |
