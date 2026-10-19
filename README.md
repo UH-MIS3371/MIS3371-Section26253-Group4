@@ -32,17 +32,19 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 
 | File | What it is |
 |---|---|
-| `transaction-form.html` | The checkout form (semantic HTML, labeled fields, native `required` and `pattern` checks). Commented to explain each part. |
-| `styles.css` | Responsive styling: a vintage library checkout card on a dark walnut desk. Wide and narrow layouts, visible keyboard focus, no image files. |
-| `app.js` | Browser behavior: reads the form, runs one function per business rule, shows live messages, and blocks a failing checkout at submit. |
-| `backend/backend.js` | Week 8 local backend: `processCheckout()` checks the checkout independently and returns a structured result. |
-| `backend/test-backend.js` | 12 named backend tests (valid, invalid, boundary). |
-| `docs/week8-README.md` | Week 8 write-up: rules, routing decision, expected vs actual test results, limitations. |
-| `docs/week7-test-log.md` | Browser-side test cases with boundary pairs (fill in the "Actual" column when testing). |
+
+| `src/transaction-form.html` | Client-side checkout form with labeled fields and HTML validation. |
+| `src/styles.css` | Responsive styling and accessible focus states. |
+| `src/app.js` | Client-side business rules, event listeners, and validation messages. |
+| `backend/backend.js` | Week 8 local backend transaction logic. |
+| `backend/test-backend.js` | Week 8 backend tests. |
+| `backend/README.md` | Backend rules, testing evidence, and limitations. |
+
 
 ## How to run
 
-**Browser side:** open `transaction-form.html` in Chrome (or use VS Code Live Server). Open DevTools (F12) to see the rule tests print in the Console.
+**Browser side:** Open `src/transaction-form.html` in Chrome. Press F12 and select Console to inspect JavaScript test results.
+
 
 **Backend (from the repository root):**
 
