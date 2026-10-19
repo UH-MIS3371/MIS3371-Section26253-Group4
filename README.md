@@ -32,7 +32,6 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 
 | File | What it is |
 |---|---|
-
 | `src/transaction-form.html` | Client-side checkout form with labeled fields and HTML validation. |
 | `src/styles.css` | Responsive styling and accessible focus states. |
 | `src/app.js` | Client-side business rules, event listeners, and validation messages. |
