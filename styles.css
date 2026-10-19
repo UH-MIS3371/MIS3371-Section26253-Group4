@@ -1,23 +1,95 @@
-/* WEEK 5 — ShelfLife Book Checkout */
+/* ---------------------------------------------------------
+   COLORS AND FONTS (change a color here and it changes everywhere)
+   --------------------------------------------------------- */
+:root {
+  color-scheme: light;               /* keeps calendar icons dark on the card */
+
+  --wood-dark: #24150C;              /* desk */
+  --wood-mid: #3A2416;
+  --card: #F3E6C4;                   /* manila card */
+  --card-light: #FAF2DA;
+  --card-edge: #D8C595;
+  --ink: #231710;                    /* typed text and descriptions (dark brown) */
+  --ink-soft: #2E1A0E;               /* labels (dark brown) */
+  --muted: #3B2A1A;                  /* header subtitle (dark brown) */
+  --burgundy: #7A1735;               /* stamp ink */
+  --red-rule: #B5303F;               /* the red rule on old cards */
+  --brass: #B8913F;                  /* trim */
+  --brass-light: #E3C877;
+  --brass-dark: #6F5420;
+  --rule-blue: rgba(110, 140, 185, 0.45);  /* ruled lines */
+
+  /* Typewriter fonts already installed on the computer, no internet needed.
+     American Typewriter is on Macs; Windows uses Courier New. */
+  --font-label: "American Typewriter", "Courier New", Courier, monospace;
+  --font-text: "Courier New", Courier, monospace;
+}
+
+
+/* ---------------------------------------------------------
+   BASE: width rules, page background (the desk)
+   --------------------------------------------------------- */
 
 /* Make width calculations predictable. */
 * {
   box-sizing: border-box;
 }
 
-main {
-width: 100%;
-max-width: 800px;
-margin: 0 auto;
-padding: 24px;
-}
-
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  line-height: 1.5;
-  color: #353f59;
-  background: #F7F7F8;
+  min-height: 100vh;
+  font-family: var(--font-text);
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: var(--ink);
+  background-color: var(--wood-dark);
+  /* Walnut: plank seams, then three grain layers with different spacing so it
+     does not look like a pattern, then a dark-to-darker wash. */
+  background-image:
+    repeating-linear-gradient(90deg,
+      transparent 0 217px, rgba(0, 0, 0, 0.45) 217px 219px, rgba(255, 210, 150, 0.06) 219px 220px),
+    repeating-linear-gradient(90.6deg,
+      rgba(0, 0, 0, 0) 0 7px, rgba(0, 0, 0, 0.14) 7px 8px, rgba(255, 215, 160, 0.035) 8px 13px,
+      rgba(0, 0, 0, 0.08) 13px 14px, rgba(0, 0, 0, 0) 14px 23px),
+    repeating-linear-gradient(89.7deg,
+      rgba(0, 0, 0, 0) 0 11px, rgba(0, 0, 0, 0.10) 11px 12px, rgba(0, 0, 0, 0) 12px 31px),
+    linear-gradient(180deg, var(--wood-mid), var(--wood-dark));
+}
+
+/* Candle glow: a warm light from above that flickers very slightly.
+   position: fixed with inset: 0 means it can never cause scrolling. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(ellipse 70% 55% at 50% -5%,
+    rgba(255, 196, 110, 0.30), rgba(255, 196, 110, 0.08) 45%, transparent 70%);
+  animation: candle 5s ease-in-out infinite;
+}
+
+/* Gold dust: a few tiny lights that twinkle slowly behind the card. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 8% 18%,  rgba(255, 225, 150, 0.9) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 92% 12%, rgba(255, 225, 150, 0.9) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 5% 55%,  rgba(255, 225, 150, 0.9) 0 2px,   transparent 3px),
+    radial-gradient(circle at 95% 48%, rgba(255, 225, 150, 0.9) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 11% 83%, rgba(255, 225, 150, 0.9) 0 1.5px, transparent 2.5px),
+    radial-gradient(circle at 90% 78%, rgba(255, 225, 150, 0.9) 0 2px,   transparent 3px),
+    radial-gradient(circle at 50% 4%,  rgba(255, 225, 150, 0.9) 0 1.5px, transparent 2.5px);
+  animation: twinkle 6s ease-in-out infinite;
+}
+
+::selection {
+  color: var(--ink);
+  background: var(--brass-light);
 }
 
 .page-shell {
@@ -27,49 +99,154 @@ body {
   padding: 24px;
 }
 
+
+/* ---------------------------------------------------------
+   HEADER: a brass-framed label, like on a card-catalog drawer
+   --------------------------------------------------------- */
 .site-header {
-  padding: 16px 0;
-  background: #FFFFFF;
-  border-bottom: 4px solid #C8102E;
+  margin: 8px 0 30px;
+  padding: 16px 28px 18px;
+  text-align: center;
+  background:
+    /* two brass screws */
+    radial-gradient(circle at 14px 50%, var(--brass-dark) 0 3px, var(--brass) 3px 5px, transparent 5.5px),
+    radial-gradient(circle at calc(100% - 14px) 50%, var(--brass-dark) 0 3px, var(--brass) 3px 5px, transparent 5.5px),
+    linear-gradient(180deg, #F6EBCB, #E9D8AB);
+  border: 2px solid var(--brass-dark);
+  border-radius: 3px;
+  /* The brass frame is made from rings of shadow, so it adds no width to the page. */
+  box-shadow:
+    0 0 0 5px var(--brass),
+    0 0 0 7px var(--brass-dark),
+    0 14px 28px rgba(0, 0, 0, 0.55),
+    inset 0 0 18px rgba(120, 80, 30, 0.25);
 }
 
 h1,
 h2 {
-  color: #7A1735;
+  font-family: var(--font-label);
+  font-weight: 400;
+  color: var(--burgundy);
+}
+
+.site-header h1 {
+  margin: 0 0 4px;
+  font-size: 1.6rem;
+  font-weight: 700;                  /* bold */
+  line-height: 1.25;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+
+/* Little brass stars on each side of the title. */
+.site-header h1::before,
+.site-header h1::after {
+  content: "\2726";                  /* four-pointed star */
+  display: inline-block;
+  margin: 0 0.45em;
+  font-size: 0.7em;
+  vertical-align: middle;
+  color: var(--brass-dark);
+}
+
+.site-header p {
+  margin: 0;
+  font-style: italic;
+  color: var(--muted);
+}
+
+
+/* ---------------------------------------------------------
+   MAIN: the library card itself
+   --------------------------------------------------------- */
+main {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 44px 32px 32px;
+  background:
+    radial-gradient(rgba(120, 90, 40, 0.07) 1px, transparent 1.5px) 0 0 / 7px 7px,   /* paper speckle */
+    linear-gradient(180deg, var(--card-light), var(--card));
+  border-radius: 4px 4px 6px 6px;
+  box-shadow:
+    0 0 0 1px var(--card-edge),
+    inset 0 0 40px rgba(150, 110, 50, 0.18),                 /* aged edges */
+    0 22px 44px rgba(0, 0, 0, 0.6);
+}
+
+/* The punched hole at the top of the card. */
+main::before {
+  content: "";
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin-left: -8px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #1A0F08, #3A2416);
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .intro-section {
   margin-bottom: 24px;
+  padding-bottom: 14px;
+  border-bottom: 4px double var(--red-rule);   /* the red rule under an old card's heading */
 }
 
+.intro-section h2 {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  letter-spacing: 0.04em;
+}
+
+.intro-section p {
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------
+   FORM LAYOUT
+   --------------------------------------------------------- */
 form {
-  background: #FFFFFF;
-  padding: 24px;
-  border-radius: 10px;
+  padding: 0;                          /* the card already has padding */
+  background: transparent;
+}
+
+/* Hide the extra line breaks in the HTML; they made big gaps between labels and boxes. */
+form br {
+  display: none;
 }
 
 .form-row {
-display: flex;
-gap: 16px;
-align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
 }
-/* Allow form fields to share available space. */
 
+/* Allow form fields to share available space. */
 .form-row .form-group {
-flex: 1 1 0;
-min-width: 0;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 fieldset {
-  margin: 0 0 24px;
-  padding: 20px;
-  border: 1px solid #D4D7DB;
-  border-radius: 8px;
+  min-width: 0;                        /* stops a wide child from pushing the page sideways */
+  margin: 8px 0 24px;
+  padding: 22px;
+  border: 2px solid rgba(74, 53, 36, 0.55);
+  border-radius: 3px;
 }
 
 legend {
-  padding: 0 8px;
-  font-weight: 700;
+  padding: 0 10px;
+  font-family: var(--font-label);
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--burgundy);
 }
 
 .form-group {
@@ -79,80 +256,266 @@ legend {
 label {
   display: block;
   margin-bottom: 6px;
-  font-weight: 700;
-}
-
-input,
-select,
-textarea {
-    width: 100%;
-    padding: 10px 12px;
-    font: inherit;
-    border: 1px solid #BFC4CA;
-    border-radius: 6px;
-    background: #FFFFFF;
-}
-/* Make keyboard focus clearly visible. */
-input:focus,
-select:focus,
-textarea:focus {
-  outline: 3px solid #F3A9B8;
-  outline-offset: 2px;
-  border-color: #C8102E;
-}
-
-
-textarea {
-  resize: vertical;
-}
-
-button {
-  padding: 11px 18px;
-  font: inherit;
-  font-weight: 700;
-  color: #FFFFFF;
-  background: #C8102E;
-  border: 0;
-  border-radius: 6px;
+  font-family: var(--font-label);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  color: var(--ink-soft);
   cursor: pointer;
 }
 
-/* Darken the button slightly when hovered. */
+
+/* ---------------------------------------------------------
+   FIELDS: typed in on a ruled line
+   --------------------------------------------------------- */
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 10px 12px 8px;
+  font: inherit;
+  color: var(--ink);
+  background-color: rgba(255, 251, 238, 0.7);
+  border: 1px solid rgba(74, 53, 36, 0.35);
+  border-bottom: 3px solid var(--ink-soft);      /* the typed line */
+  border-radius: 2px 2px 0 0;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Make keyboard focus clearly visible: dark outline plus a warm brass glow. */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 3px solid var(--burgundy);
+  outline-offset: 2px;
+  background-color: #FFFBEA;
+  box-shadow: 0 0 0 7px rgba(184, 145, 63, 0.32);
+}
+
+/* After a visitor has touched a field and it is wrong or empty, mark the line red.
+   (Separate rule: a browser that does not know :user-invalid just skips it.) */
+input:user-invalid,
+select:user-invalid,
+textarea:user-invalid {
+  border-bottom-color: var(--red-rule);
+  background-color: #FBE7E1;
+}
+
+select {
+  padding-right: 42px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='10' viewBox='0 0 16 10'%3E%3Cpath d='M1 1l7 7 7-7' fill='none' stroke='%232B2118' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
+/* The due date is stamped like the DATE DUE box on an old card. */
+#due-date {
+  border: 2px solid var(--burgundy);
+  border-bottom-width: 4px;
+  background-color: rgba(122, 23, 53, 0.05);
+}
+
+/* The Notes box is ruled like an index card. */
+textarea {
+  padding-top: 4px;
+  line-height: 28px;
+  background-image: repeating-linear-gradient(transparent 0 27px, var(--rule-blue) 27px 28px);
+  background-attachment: local;
+  resize: vertical;
+}
+
+
+/* ---------------------------------------------------------
+   MESSAGES (live feedback and the submit result)
+   JavaScript only sets the text, so CSS styles the boxes. An empty message is hidden.
+   --------------------------------------------------------- */
+#dueDateMessage,
+#fineMessage,
+#itemsOutMessage,
+#bookStatusMessage {
+  margin: 6px 0 0;
+  font-style: italic;
+  color: var(--burgundy);
+}
+
+#bookStatusMessage {
+  margin-bottom: 18px;                 /* this one sits outside a .form-group */
+}
+
+#dueDateMessage::before,
+#fineMessage::before,
+#itemsOutMessage::before,
+#bookStatusMessage::before {
+  content: "\21B3  ";                  /* a small arrow, like a typed note */
+  font-style: normal;
+}
+
+/* The submit result looks like a rubber stamp. */
+#formMessage {
+  margin: 20px 0 0;
+  padding: 12px 16px;
+  font-family: var(--font-label);
+  letter-spacing: 0.02em;
+  color: var(--burgundy);
+  background: rgba(122, 23, 53, 0.06);
+  border: 3px double var(--burgundy);
+  border-radius: 4px;
+  transform: rotate(-0.6deg);
+  animation: stamp-in 0.28s ease-out;
+}
+
+#dueDateMessage:empty,
+#fineMessage:empty,
+#itemsOutMessage:empty,
+#bookStatusMessage:empty,
+#formMessage:empty {
+  display: none;
+}
+
+/* Anything with the hidden attribute stays hidden (the Hold ID box uses it). */
+[hidden] {
+  display: none !important;
+}
+
+/* The Hold ID box is a loose slip tucked into the card. It slides in when it appears. */
+#holdIdGroup {
+  padding: 12px 14px;
+  background: rgba(255, 251, 238, 0.6);
+  border: 1px dashed rgba(74, 53, 36, 0.55);
+  border-left: 6px solid var(--brass);
+}
+
+#holdIdGroup:not([hidden]) {
+  animation: slip-in 0.35s ease-out;
+}
+
+
+/* ---------------------------------------------------------
+   BUTTON: a rubber-stamp / brass-edged seal
+   --------------------------------------------------------- */
+button {
+  padding: 12px 22px;
+  font-family: var(--font-label);
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #FBEFD0;
+  background: linear-gradient(180deg, #8B1D3E, var(--burgundy));
+  border: 3px double var(--brass-light);
+  border-radius: 6px;
+  box-shadow: 0 4px 0 #4A0E20, 0 8px 14px rgba(0, 0, 0, 0.35);
+  transform: rotate(-1deg);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+}
 
 button:hover {
-  filter: brightness(0.92);
+  filter: brightness(1.08);
+  box-shadow: 0 4px 0 #4A0E20, 0 8px 18px rgba(0, 0, 0, 0.4), 0 0 16px rgba(227, 200, 119, 0.55);
+}
+
+/* Pressed down like a stamp hitting the card. */
+button:active {
+  transform: translateY(3px) rotate(-1deg);
+  box-shadow: 0 1px 0 #4A0E20, 0 3px 6px rgba(0, 0, 0, 0.35);
 }
 
 button:focus-visible {
-  outline: 3px solid #F3A9B8;
-  outline-offset: 3px;
+  outline: 3px solid var(--ink);
+  outline-offset: 4px;
 }
 
+
+/* ---------------------------------------------------------
+   FOOTER: like the stamp line on the back of a book
+   --------------------------------------------------------- */
 .site-footer {
-  margin-top: 32px;
-  padding: 16px 0;
-  color: #676B72;
-  background: #FFFFFF;
-  border-top: 1px solid #E4E5E7;
+  margin-top: 36px;
+  padding: 16px 0 8px;
+  text-align: center;
+  font-family: var(--font-label);
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  color: var(--brass-light);
+  border-top: 1px dashed rgba(227, 200, 119, 0.5);
 }
 
-/* Adjust the layout for smaller screens. */
-@media (max-width: 600px) {
-  main{
-    padding: 16px;
+.site-footer p {
+  margin: 0;
+}
+
+
+/* ---------------------------------------------------------
+   ANIMATIONS
+   --------------------------------------------------------- */
+@keyframes candle {
+  0%, 100% { opacity: 0.85; }
+  30%      { opacity: 1; }
+  55%      { opacity: 0.78; }
+  80%      { opacity: 0.95; }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 0.75; }
+}
+
+/* Slides down a little while fading in. (No scaling, so it can never push the page wider.) */
+@keyframes slip-in {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes stamp-in {
+  from { opacity: 0; transform: translateY(-8px) rotate(-2.5deg); }
+  to   { opacity: 1; transform: translateY(0) rotate(-0.6deg); }
+}
+
+/* Visitors who ask their computer for less motion get none. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
   }
-  
+}
+
+
+/* ---------------------------------------------------------
+   NARROW SCREENS
+   --------------------------------------------------------- */
+@media (max-width: 600px) {
   .page-shell {
     padding: 16px;
   }
 
-  form {
+  .site-header {
+    padding: 14px 22px 16px;
+  }
+
+  .site-header h1 {
+    font-size: 1.25rem;
+  }
+
+  main {
+    padding: 40px 18px 24px;
+  }
+
+  fieldset {
     padding: 16px;
   }
 
   .form-row {
     flex-direction: column;
     gap: 0;
+  }
+
+  .form-row .form-group {
+    flex: none;                        /* in a column, do not stretch the fields' height */
+    width: 100%;
   }
 
   button {
