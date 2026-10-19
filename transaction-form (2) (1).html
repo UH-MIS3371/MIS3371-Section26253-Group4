@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Checkout | ShelfLife</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <div class="page-shell">
+    <header class="site-header">
+      <h1>ShelfLife - Book Checkout</h1>
+      <p>Request to check out one physical library book.</p>
+    </header>
+
+    <main>
+      <section class="intro-section">
+        <h2>Before You Check Out a Book</h2>
+        <p>Please have your reader ID, book barcode or ISBN, and requested checkout date ready.</p>
+      </section>
+
+      <section>
+       <p>Fields marked (required) must be completed. Books are loaned for five calendar days.</p>
+      <form id="checkout-form" method="get">
+        <fieldset>
+          <legend>Reader and Book Information</legend>
+
+            <div class="form-group">
+            <label for="reader-id">Reader ID (required)</label><br>
+            <input type="text" id="reader-id" name="reader-id" required pattern=".*\S.*" title="Enter a reader ID, not just spaces.">
+          </div>
+
+          <div class="form-group">
+            <label for="book-id">Book Barcode or ISBN (required)</label><br>
+            <input type="text" id="book-id" name="book-id" required pattern=".*\S.*" title="Enter a book barcode or ISBN, not just spaces.">
+          </div>
+
+          <div class="form-row">
+          <div class="form-group">
+            <label for="checkout-date">Requested Checkout Date (required)</label>
+            <input type="date" id="checkout-date" name="checkout-date" required>
+          </div>
+
+          <div class="form-group">
+              <label for="due-date">Due Date (required, no more than 5 calendar days)</label>
+              <input type="date" id="due-date" name="dueDate" required> <br>
+              <p id="dueDateMessage" aria-live="polite"></p>
+          </div>
+          </div>
+
+        <div class="form-group">
+          <label for="fineInput">Outstanding Fines $ (required)</label><br>
+          <input type="number" id="fineInput" name="fineInput" min="0" step="0.01" required>
+          <p id="fineMessage" aria-live="polite"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="bookStatus">Book Status (required)</label><br>
+          <select id="bookStatus" name="bookStatus" required>
+            <option value="">-- Select status --</option>
+            <option value="available">Available</option>
+            <option value="checked-out">Checked Out</option>
+            <option value="on-hold">On Hold</option>
+            <option value="lost">Lost</option>
+          </select>
+        </div>
+        
+        <!-- BR-3: shown by app.js ONLY when the status is On Hold. It starts hidden.
+        The word "hidden" means the browser does not show it at first.
+        When the status becomes On Hold, app.js switches it on (holdIdGroup.hidden = false);
+        for any other status it switches it off and clears what was typed.-->
+        <div class="form-group" id="holdIdGroup" hidden>
+          <label for="holdReaderId">Hold Placed By (Reader ID)</label><br>
+          <!--same ID = this reader placed the hold, so checkout is allowed.
+          Different ID = the hold belongs to someone else, so checkout is blocked -->
+          <input type="text" id="holdReaderId" name="holdReaderId">
+        </div>
+
+        <!-- book message when either the check out is blocked or approved-->
+        <p id="bookStatusMessage" aria-live="polite"></p>
+
+          <div class="form-group">
+            <label for="notes">Notes (optional)</label><br>
+            <textarea id="notes" name="notes" rows="4" cols="40"></textarea>
+          </div>
+
+          <button type="submit">Submit Checkout Request</button>
+          <p id="formMessage" aria-live="polite"></p>
+        </fieldset>
+      </form>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>MIS 3371 — Team 4 — ShelfLife</p>
+  </footer>
+  </div>
+</body>
+</html>
