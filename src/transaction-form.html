@@ -56,6 +56,21 @@
         </div>
 
         <div class="form-group">
+          <label for="itemsOut">
+           Books Currently Checked Out (required)
+          </label>
+          <input
+            type="number"
+            id="itemsOut"
+            name="itemsOut"
+            min="0"
+            step="1"
+            required
+  >
+  <p id="itemsOutMessage" aria-live="polite"></p>
+</div>
+
+        <div class="form-group">
           <label for="bookStatus">Book Status (required)</label><br>
           <select id="bookStatus" name="bookStatus" required>
             <option value="">-- Select status --</option>
