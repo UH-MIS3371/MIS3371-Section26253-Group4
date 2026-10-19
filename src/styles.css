@@ -330,9 +330,12 @@ textarea {
    MESSAGES (live feedback and the submit result)
    JavaScript only sets the text, so CSS styles the boxes. An empty message is hidden.
    --------------------------------------------------------- */
+
 #dueDateMessage,
 #fineMessage,
+#itemsOutMessage,
 #bookStatusMessage {
+
   margin: 6px 0 0;
   font-style: italic;
   color: var(--burgundy);
@@ -342,9 +345,12 @@ textarea {
   margin-bottom: 18px;                 /* this one sits outside a .form-group */
 }
 
+
 #dueDateMessage::before,
 #fineMessage::before,
+#itemsOutMessage::before,
 #bookStatusMessage::before {
+
   content: "\21B3  ";                  /* a small arrow, like a typed note */
   font-style: normal;
 }
@@ -363,10 +369,13 @@ textarea {
   animation: stamp-in 0.28s ease-out;
 }
 
+
 #dueDateMessage:empty,
 #fineMessage:empty,
+#itemsOutMessage:empty,
 #bookStatusMessage:empty,
 #formMessage:empty {
+
   display: none;
 }
 
