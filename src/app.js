@@ -339,12 +339,12 @@ function updateItemsOutMessage() {
     return;
   }
   const itemsOut = Number(itemsOutInput.value);
+  
   if (exceedsItemLimit(itemsOut)) {
-    itemsOutMessage.textContent = "Item limit reached: a reader may have at most " + MAX_CHECKOUT_ITEMS + " books checked out.";
+  itemsOutMessage.textContent = "Checkout not allowed! You can only check out up to " + MAX_CHECKOUT_ITEMS + " books.";
   } else {
-    // Show which book this would be, for example "book 3 of 3".
-    itemsOutMessage.textContent = "Within the limit: this would be book " + (itemsOut + 1) + " of " + MAX_CHECKOUT_ITEMS + ".";
-  }
+  itemsOutMessage.textContent = "Checkout allowed! You currently have " + itemsOut + " books. After this checkout, you will have " + (itemsOut + 1) + " out of " + MAX_CHECKOUT_ITEMS + " books.";
+}
 }
 
 // 3. SUBMIT: returns true if BR-4 passes, false if it blocks the form.
@@ -356,7 +356,7 @@ function checkItemsAtSubmit() {
   }
   const itemsOut = Number(itemsOutInput.value);
   if (exceedsItemLimit(itemsOut)) {
-    formMessage.textContent = "Checkout blocked: this reader already has " + itemsOut + " books checked out (limit " + MAX_CHECKOUT_ITEMS + "). Return a book first.";
+    formMessage.textContent = "Checkout not allowed! You can only check out up to " + MAX_CHECKOUT_ITEMS + " books.";
     itemsOutInput.focus();
     return false;
   }
