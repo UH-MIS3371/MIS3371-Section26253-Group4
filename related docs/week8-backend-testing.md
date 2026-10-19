@@ -98,14 +98,3 @@ The book status, hold reader, and fines are passed in with the checkout object, 
 
 - **BR-4** (maximum 3 books checked out) is enforced in the browser (`app.js`). It is not part of this week's backend rules.
 - **BR-6** (only one reader per physical book at a time) and **BR-7** (barcode or ISBN matches an existing book record) need stored book records, so they wait for the database weeks.
-- **BR-8** (checkout date not in the past) is postponed.
-
-## Upcoming weeks
-
-- Week 9: reuse `processCheckout` behind a local API (Express, HTTP, JSON, `fetch()`).
-- Week 10: move that logic into AWS Lambda and API Gateway.
-- Week 11: DynamoDB persistence for a create and retrieve path.
-
-## Suggested commit message
-
-`Add Week 8 local backend validation and transaction processing logic`
