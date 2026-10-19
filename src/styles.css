@@ -9,18 +9,16 @@
   --card: #F3E6C4;                   /* manila card */
   --card-light: #FAF2DA;
   --card-edge: #D8C595;
-  --ink: #231710;                    /* typed text and descriptions (dark brown) */
-  --ink-soft: #2E1A0E;               /* labels (dark brown) */
-  --muted: #3B2A1A;                  /* header subtitle (dark brown) */
+  --ink: #231710;                    /* typed text */
+  --ink-soft: #2E1A0E;               /* labels */
+  --muted: #3B2A1A;                  /* secondary text */
   --burgundy: #7A1735;               /* stamp ink */
   --red-rule: #B5303F;               /* the red rule on old cards */
   --brass: #B8913F;                  /* trim */
   --brass-light: #E3C877;
   --brass-dark: #6F5420;
   --rule-blue: rgba(110, 140, 185, 0.45);  /* ruled lines */
-
-  /* Typewriter fonts already installed on the computer, no internet needed.
-     American Typewriter is on Macs; Windows uses Courier New. */
+  
   --font-label: "American Typewriter", "Courier New", Courier, monospace;
   --font-text: "Courier New", Courier, monospace;
 }
@@ -43,8 +41,7 @@ body {
   line-height: 1.55;
   color: var(--ink);
   background-color: var(--wood-dark);
-  /* Walnut: plank seams, then three grain layers with different spacing so it
-     does not look like a pattern, then a dark-to-darker wash. */
+
   background-image:
     repeating-linear-gradient(90deg,
       transparent 0 217px, rgba(0, 0, 0, 0.45) 217px 219px, rgba(255, 210, 150, 0.06) 219px 220px),
@@ -56,8 +53,7 @@ body {
     linear-gradient(180deg, var(--wood-mid), var(--wood-dark));
 }
 
-/* Candle glow: a warm light from above that flickers very slightly.
-   position: fixed with inset: 0 means it can never cause scrolling. */
+/* Candle glow */
 body::before {
   content: "";
   position: fixed;
@@ -69,7 +65,7 @@ body::before {
   animation: candle 5s ease-in-out infinite;
 }
 
-/* Gold dust: a few tiny lights that twinkle slowly behind the card. */
+/* Gold dust*/
 body::after {
   content: "";
   position: fixed;
@@ -104,6 +100,7 @@ body::after {
    HEADER: a brass-framed label, like on a card-catalog drawer
    --------------------------------------------------------- */
 .site-header {
+  font-weight: 700;
   margin: 8px 0 30px;
   padding: 16px 28px 18px;
   text-align: center;
@@ -130,9 +127,9 @@ h2 {
 }
 
 .site-header h1 {
+  font-weight: 700;                  
   margin: 0 0 4px;
   font-size: 1.6rem;
-  font-weight: 700;                  /* bold */
   line-height: 1.25;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -197,6 +194,7 @@ main::before {
 }
 
 .intro-section h2 {
+  font-weight: 700;   
   margin: 0 0 8px;
   font-size: 1.35rem;
   letter-spacing: 0.04em;
@@ -241,6 +239,7 @@ fieldset {
 }
 
 legend {
+  font-weight: 700;   
   padding: 0 10px;
   font-family: var(--font-label);
   font-size: 1.05rem;
@@ -333,7 +332,6 @@ textarea {
    --------------------------------------------------------- */
 #dueDateMessage,
 #fineMessage,
-#itemsOutMessage,
 #bookStatusMessage {
   margin: 6px 0 0;
   font-style: italic;
@@ -346,7 +344,6 @@ textarea {
 
 #dueDateMessage::before,
 #fineMessage::before,
-#itemsOutMessage::before,
 #bookStatusMessage::before {
   content: "\21B3  ";                  /* a small arrow, like a typed note */
   font-style: normal;
@@ -368,7 +365,6 @@ textarea {
 
 #dueDateMessage:empty,
 #fineMessage:empty,
-#itemsOutMessage:empty,
 #bookStatusMessage:empty,
 #formMessage:empty {
   display: none;
