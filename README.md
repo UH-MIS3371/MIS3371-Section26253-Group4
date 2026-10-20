@@ -37,7 +37,7 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 | `src/app.js` | Client-side business rules, event listeners, and validation messages. |
 | `backend/backend.js` | Week 8 local backend transaction logic. |
 | `backend/test-backend.js` | Week 8 backend tests. |
-| `backend/README.md` | Backend rules, testing evidence, and limitations. |
+| `backend/week8-backend-testing.md` | Backend rules, testing evidence, and limitations. |
 
 
 ## How to run
