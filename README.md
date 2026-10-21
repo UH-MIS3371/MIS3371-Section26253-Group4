@@ -30,6 +30,14 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 
 ## Files
 
+| File | What it is |
+|---|---|
+| `src/transaction-form.html` | Client-side checkout form with labeled fields and HTML validation. |
+| `src/styles.css` | Responsive styling and accessible focus states. |
+| `src/app.js` | Client-side business rules, event listeners, and validation messages. |
+| `backend/backend.js` | Week 8 local backend transaction logic. |
+| `backend/test-backend.js` | Week 8 backend tests. |
+| `backend/README.md` | Backend rules, testing evidence, and limitations. |
 | `docs/` | All project documents, organized by course stage. Start at `docs/README.md`. |
 | `docs/08-local-backend/week8-backend-testing.md` | Week 8 rules, routing decision, expected vs actual test results. |
 | `docs/04-07-client-side/browser-test-log.md` | Milestone 2 browser boundary tests. |
