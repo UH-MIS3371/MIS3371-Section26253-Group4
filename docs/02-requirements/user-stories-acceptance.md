@@ -4,11 +4,11 @@ READER:
 
 As a **reader**, I want to check out a book so that I know it's reserved for me and when it's due.
 
-> Acceptance: Given the item is Available, the reader has no blocking fines and is under their item limit, when the reader submits a checkout request, then the item status changes to Checked Out and a due date 5 days out is returned.
+> Acceptance: Given the item is Available, the reader has no blocking fines and is under their item limit, when the reader submits a checkout request, then the item status changes to Checked Out with the due date the reader chose (1 to 5 days after checkout).
 
 As a **reader**, I want to be told why my checkout was rejected so that I know what to fix.
 
-> Acceptance: Given a business rule is violated (fines over limit, item on hold, at item cap, or reference-only), when the reader submits a checkout request, then the system returns a rejection with the specific reason.
+> Acceptance: Given a business rule is violated (fines over limit, item not available, item on hold for another reader, at item cap, or due date outside 1 to 5 days), when the reader submits a checkout request, then the system returns a rejection with the specific reason.
 
 LIBRARIAN:
 

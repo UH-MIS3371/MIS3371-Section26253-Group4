@@ -37,7 +37,6 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 | `src/app.js` | Client-side business rules, event listeners, and validation messages. |
 | `backend/backend.js` | Week 8 local backend transaction logic. |
 | `backend/test-backend.js` | Week 8 backend tests. |
-| `backend/README.md` | Backend rules, testing evidence, and limitations. |
 | `docs/` | All project documents, organized by course stage. Start at `docs/README.md`. |
 | `docs/08-local-backend/week8-backend-testing.md` | Week 8 rules, routing decision, expected vs actual test results. |
 | `docs/04-07-client-side/browser-test-log.md` | Milestone 2 browser boundary tests. |
@@ -63,12 +62,12 @@ No `npm install`, server, AWS account, or database is needed.
 | BR-1 | Outstanding fines must not exceed $10.00 | Live message + submit block | Enforced |
 | BR-2 | Only an Available book can be checked out | Live message + submit block | Enforced |
 | BR-3 | A book on hold for another reader cannot be checked out; the reader who placed the hold may check it out | Hold ID box appears only for On Hold; live message + submit block | Enforced (Hold pickup path) |
-| BR-4 | A reader may have at most 3 books checked out | "Books Currently Checked Out" box; live message + submit block | Not in this week's backend rules |
+| BR-4 | A reader may have at most 3 books checked out | "Books Currently Checked Out" box; live message + submit block | Enforced |
 | BR-5 | The due date must be 1 to 5 calendar days after the checkout date | Live message + submit block | Enforced |
 | BR-6 | Only one reader may check out a physical book at a time | Covered only by BR-2 (Checked Out status) | Later weeks (needs stored records) |
 | BR-7 | The barcode or ISBN must match an existing book record | Required, non-blank only | Later weeks (needs stored records) |
 
-BR-3 and BR-5 are conditional rules: the answer depends on more than one field. At submit the checks run in this order and the first failure stops the checkout: BR-5, BR-1, BR-4, BR-3, BR-2.
+BR-3 and BR-5 are conditional rules: the answer depends on more than one field. At submit the checks run in this order and the first failure stops the checkout: BR-5, BR-1, BR-4, BR-3, BR-2. The backend checks the same rules in the same order.
 
 ## Milestone 2 — client-side system
 

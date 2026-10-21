@@ -28,7 +28,7 @@ Not authoritative for
 
 - Whether the book is available, on hold, or has fines or limits problems
 
-- How the due date is calculated
+- Whether the due date is within the 5-day loan limit
 
 - The official status of the book or checkout
 
@@ -48,9 +48,7 @@ Future responsibilities
 
 - Apply business rules
 
-- Blocks checkout reference-only and reserve items
-
-- Calculate due date
+- Check the due date is 1 to 5 days after checkout (BR-5, FR-8)
 
 - Stop double checkout
 

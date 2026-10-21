@@ -14,7 +14,7 @@ FR-6: The system shall reject the checkout if the reader's outstanding fines exc
 
 FR-7: The system shall reject the checkout if it would cause the reader to exceed the maximum checkout-items limit (BR-4).
 
-FR-8: The system shall automatically calculate the due date as 5 calendar days from the checkout date (BR-5).
+FR-8: The system shall accept a due date only if it is 1 to 5 calendar days after the checkout date, and reject any other due date with a clear reason (BR-5).
 
 FR-9: The system shall ensure only one reader can successfully complete checkout on a given physical book, even if two attempts occur at the same time (BR-6).
 

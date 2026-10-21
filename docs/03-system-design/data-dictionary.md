@@ -13,7 +13,7 @@ This dictionary defines 20 fields for one reader checking out one physical libra
 | bookIdentifier | Barcode or ISBN entered or scanned for lookup.               | Text     | At submission   | User-entered         | Must match an existing catalog/copy record (BR-7). ISBN alone does not identify a physical copy.    | BC-004812                           |
 | itemCopyId     | Specific physical copy selected for this loan.               | Text     | Before success  | System-assigned      | Resolved from catalog; if ISBN matches multiple copies, select one eligible copy before completion. | COPY-004812                         |
 | checkoutDate   | Calendar date on which the loan starts.                      | Date     | At submission   | User-entered         | Valid date, confirmed by the application when the checkout is completed.                            | 2026-09-14                          |
-| dueDate        | Date the borrowed copy is due.                               | Date     | On success      | Derived / calculated | checkoutDate + 5 calendar days (BR-5, FR-8); not editable by the reader.                            | 2026-09-19                          |
+| dueDate        | Date the borrowed copy is due.                               | Date     | At submission   | User-entered         | 1 to 5 calendar days after checkoutDate (BR-5, FR-8); the application rejects any other date.       | 2026-09-19                          |
 | notes          | Optional checkout-related comments.                          | Text     | No              | User-entered         | May be blank; treat as text, not executable markup.                                                 | Reader requested a printed receipt. |
 
 Source key: User-entered = supplied by a reader or clerk. Derived / calculated = computed from other values. System-assigned = assigned by the application or populated from authoritative stored records. Examples are fictional.
@@ -49,7 +49,7 @@ Fields marked At submission can be blank in Draft. A rejected request may lack i
 
 ## Authoritative checks and persistence
 
-The application rechecks current reader fines, loan count, item availability, holds and applicable item restrictions before committing. Fine limits and maximum-item limits come from library policy; no numeric limits are assumed here. Eligibility snapshots document the decision and do not replace current library records.
+The application rechecks current reader fines, loan count, item availability, holds and the due date range before committing. Fine limits and maximum-item limits come from library policy; no numeric limits are assumed here. Eligibility snapshots document the decision and do not replace current library records.
 
 Save the successful checkout, item status change and audit event together. Concurrent attempts for the same copy must allow only one success; record the losing attempt as Rejected with a reason. Enforce the reader loan limit consistently under concurrent requests too. A restricted or unavailable item cannot become a successful checkout solely because a rejection message was displayed.
 
