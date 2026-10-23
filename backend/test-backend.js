@@ -19,6 +19,7 @@ const baseCheckout = {
   checkoutDate: "2026-10-01",
   dueDate: "2026-10-04",
   fines: 0,
+  itemsOut: 0,
   bookStatus: "available",
   holdReaderId: ""
 };
@@ -115,6 +116,28 @@ const tests = [
     checkout: checkoutWith({ checkoutDate: "2026-09-29", dueDate: "2026-10-04" }),
     expectSuccess: true,
     expectPath: "Standard"
+  },
+  {
+    // Exact boundary: 2 books out, so this checkout is book 3 of 3.
+    name: "2 books already out (this is book 3) - allowed",
+    type: "boundary",
+    checkout: checkoutWith({ itemsOut: 2 }),
+    expectSuccess: true,
+    expectPath: "Standard"
+  },
+  {
+    name: "3 books already out (this would be book 4) - invalid",
+    type: "boundary",
+    checkout: checkoutWith({ itemsOut: 3 }),
+    expectSuccess: false,
+    expectMessage: "Checkout blocked: checkout limit of 3 books reached."
+  },
+  {
+    name: "Books checked out left blank - invalid",
+    type: "invalid",
+    checkout: checkoutWith({ itemsOut: "" }),
+    expectSuccess: false,
+    expectMessage: "Books currently checked out must be a whole number that is 0 or more."
   }
 ];
 
