@@ -40,6 +40,11 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 | `docs/` | All project documents, organized by course stage. Start at `docs/README.md`. |
 | `docs/08-local-backend/week8-backend-testing.md` | Week 8 rules, routing decision, expected vs actual test results. |
 | `docs/04-07-client-side/browser-test-log.md` | Milestone 2 browser boundary tests. |
+| `src/week9-api.js` | Week 9: sends the checkout to the local API with `fetch()` and shows the result. |
+| `server/server.js` | Week 9 local Express server: serves the page and `POST /api/checkouts`. |
+| `server/test-api.js` | Week 9 HTTP tests against the running server. |
+| `package.json` | Express dependency and the `npm start` / `npm run test:*` commands. |
+| `docs/09-local-api/week9-api-testing.md` | Week 9 API, run instructions, end-to-end tests, and Network evidence. |
 
 
 ## How to run
@@ -78,3 +83,23 @@ BR-3 and BR-5 are conditional rules: the answer depends on more than one field. 
 - Boundary tests in the Console for each rule: $10.00 and $10.01, due +5 and +6 days, 2 and 3 books already out.
 
 This is client-side behavior. The browser only helps the reader; the backend makes the official decision.
+
+## Week 9 — Local API
+
+The form now sends each checkout to the backend over HTTP:
+
+**Form → JSON → `POST /api/checkouts` → Express → `processCheckout()` → 200 or 400 JSON → message on the page.**
+
+```bash
+npm install          # first time only
+npm start            # starts http://localhost:3000; keep this terminal open
+npm run test:api     # in a second terminal while the server runs
+npm run test:backend # Week 8 tests; no server needed
+```
+
+- `server/server.js` only moves data; the business rules stay in `backend/backend.js`.
+- `src/week9-api.js` replaces the Week 7 demo submit handler with one that calls the API using `fetch()`. `app.js` is unchanged, so the live messages still work.
+- The page shows three outcomes: approved, rejected with the backend's reason, or "Cannot reach the ShelfLife server" when the server is stopped.
+- Nothing is saved yet. Storage starts in Week 11.
+
+Details, test results, and Network evidence: [`docs/09-local-api/week9-api-testing.md`](docs/09-local-api/week9-api-testing.md).

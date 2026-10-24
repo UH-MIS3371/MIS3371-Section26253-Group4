@@ -12,7 +12,8 @@
   --ink: #231710;                    /* typed text */
   --ink-soft: #2E1A0E;               /* labels */
   --muted: #3B2A1A;                  /* secondary text */
-  --burgundy: #7A1735;               /* stamp ink */
+  --burgundy: #7A1735;
+  --stamp-green: #1F5A33;            /* approved stamp ink */              /* stamp ink */
   --red-rule: #B5303F;               /* the red rule on old cards */
   --brass: #B8913F;                  /* trim */
   --brass-light: #E3C877;
@@ -367,6 +368,13 @@ textarea {
   border-radius: 4px;
   transform: rotate(-0.6deg);
   animation: stamp-in 0.28s ease-out;
+}
+
+/* Week 9: an approved checkout gets green stamp ink (set by week9-api.js). */
+#formMessage[data-result="approved"] {
+  color: var(--stamp-green);
+  background: rgba(31, 90, 51, 0.08);
+  border-color: var(--stamp-green);
 }
 
 
