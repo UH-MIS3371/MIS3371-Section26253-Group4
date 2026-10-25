@@ -4,7 +4,7 @@ BR-1: A reader may not check out an item if their outstanding fines exceed the l
 
 BR-2: A book may only be checked out if its current status is Available. Books that are Checked Out, Lost, or otherwise unavailable cannot be checked out. 
 
-BR-3: A book with an active hold for another reader may not be checked out by the current reader.
+BR-3: A book with an active hold may only be checked out by the reader who placed the hold. 
 
 BR-4: A reader cannot complete a checkout if doing so would cause them to exceed the maximum checkout items limit of 3 books.
 
