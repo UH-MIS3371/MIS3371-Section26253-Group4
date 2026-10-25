@@ -14,11 +14,13 @@
  * re-checks the critical rules on its own. No HTTP server, no database, nothing is saved.
  *
  * Rules enforced here: BR-5 (due date within 5 days), BR-1 (fines over $10.00),
- * BR-3 (hold belongs to another reader), BR-2 (book must be Available).
+ * BR-4 (at most 3 books checked out), BR-3 (hold belongs to another reader),
+ * BR-2 (book must be Available).
  */
 
-const FINE_LIMIT = 10.00;  // BR-1
-const MAX_LOAN_DAYS = 5;   // BR-5
+const FINE_LIMIT = 10.00;       // BR-1
+const MAX_LOAN_DAYS = 5;        // BR-5
+const MAX_CHECKOUT_ITEMS = 3;   // BR-4
 
 // Turn a Date into "YYYY-MM-DD" text so two dates can be compared in date order.
 function formatDate(dateObject) {
@@ -54,6 +56,12 @@ function exceedsFineLimit(amount) {
   return amount > FINE_LIMIT;
 }
 
+// BR-4: itemsOut is how many books the reader ALREADY has. This checkout adds one,
+// so 2 out (this is book 3) is allowed and 3 out (this would be book 4) is blocked.
+function exceedsItemLimit(itemsOut) {
+  return itemsOut + 1 > MAX_CHECKOUT_ITEMS;
+}
+
 // BR-3: true when the book is on hold for someone other than this reader.
 function holdBlocksCheckout(bookStatus, holdReaderId, readerId) {
   return bookStatus === "on-hold" && holdReaderId !== readerId;
@@ -83,7 +91,7 @@ function createTransactionId() {
 
 /**
  * Process one checkout request.
- * @param {object} checkout - { readerId, bookId, checkoutDate, dueDate, fines, bookStatus, holdReaderId }
+ * @param {object} checkout - { readerId, bookId, checkoutDate, dueDate, fines, itemsOut, bookStatus, holdReaderId }
  * @returns {object} Decision/result, NOT a transaction saved to a database.
  */
 function processCheckout(checkout) {
@@ -96,6 +104,8 @@ function processCheckout(checkout) {
   const holdReaderId = String(checkout.holdReaderId || "").trim();
   const finesText = String(checkout.fines === undefined || checkout.fines === null ? "" : checkout.fines).trim();
   const fines = Number(finesText);
+  const itemsOutText = String(checkout.itemsOut === undefined || checkout.itemsOut === null ? "" : checkout.itemsOut).trim();
+  const itemsOut = Number(itemsOutText);
 
   // STEP 2: Validate the data before applying business rules.
   if (!readerId) {
@@ -119,6 +129,11 @@ function processCheckout(checkout) {
     return fail("Fines must be a number that is 0 or more.");
   }
 
+  // A count of books must be a whole number: 2.5 books or -1 books makes no sense.
+  if (itemsOutText === "" || !Number.isInteger(itemsOut) || itemsOut < 0) {
+    return fail("Books currently checked out must be a whole number that is 0 or more.");
+  }
+
   if (!bookStatus) {
     return fail("Book status is required.");
   }
@@ -130,6 +145,10 @@ function processCheckout(checkout) {
 
   if (exceedsFineLimit(fines)) {
     return fail("Checkout blocked: fine limit exceeded.");
+  }
+
+  if (exceedsItemLimit(itemsOut)) {
+    return fail("Checkout blocked: checkout limit of 3 books reached.");
   }
 
   // BR-3 runs before BR-2: a held book is decided by who placed the hold.
