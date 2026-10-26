@@ -2,7 +2,7 @@
 
 # 1. State transition diagram
 
-![State transition diagram for a library book](images/state-transition-diagram.jpeg)
+![State transition diagram for a checkout request: Draft, Submitted, Completed, Rejected](images/state-transition-diagram.jpeg)
 
 # 2. State definitions
 
