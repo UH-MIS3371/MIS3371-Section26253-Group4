@@ -36,7 +36,7 @@ Source key: User-entered = supplied by a reader or clerk. Derived / calculated =
 
 Draft is an incomplete saved request. Submitted is awaiting checks and a committed outcome. Completed means the loan and item update were saved successfully. Rejected means the attempt was denied with a reason. The planned transaction transitions are Draft → Submitted → Completed or Draft → Submitted → Rejected; Completed and Rejected are terminal outcomes for that attempt.
 
-These transaction statuses are separate from item statuses. Available, On Hold, and Checked Out describe a physical copy, not a checkout request. The [existing state diagram](state-transition-diagram.md) describes the book lifecycle; Renewed, Overdue, Returned, and Lost / Damaged in that diagram are not additional checkout transaction states and do not add those workflows to this build.
+These transaction statuses are separate from item statuses. Available, On Hold, and Checked Out describe a physical copy, not a checkout request. The [state transition diagram](state-transition-diagram.md) shows these transaction statuses: Draft → Submitted → Completed or Rejected. A rejected attempt does not change; the reader starts a new Draft after correcting the problem.
 
 For a standard checkout, the item changes Available → Checked Out. For a hold pickup, it changes On Hold → Checked Out only when the active hold belongs to readerId; that hold is fulfilled. A hold for another reader or an unidentified hold owner blocks checkout. Pickup of one's own hold is a normal eligibility path, not a staff override.
 

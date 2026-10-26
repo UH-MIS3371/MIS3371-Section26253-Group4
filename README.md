@@ -2,7 +2,9 @@
 
 MIS 3371 Transaction Processing Systems I — Team 4
 
-ShelfLife is a library checkout transaction system. This repository holds the client-side system (Milestone 2) and the local backend logic (Week 8). The two layers are not connected yet.
+ShelfLife is a library book checkout system developed for MIS 3371. The project includes a responsive client-side application (Milestone 2), local backend validation (Week 8), and an Express API that connects the frontend to the backend using HTTP and JSON (Week 9).
+
+The system validates checkout requests and displays approval or rejection messages. Transactions are not permanently saved yet.
 
 ## The transaction
 
@@ -48,16 +50,32 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 
 ## How to run
 
-**Browser side:** Open `src/transaction-form.html` in Chrome. Press F12 and select Console to inspect JavaScript test results.
+ShelfLife requires Node.js version 18 or newer.
 
-
-**Backend (from the repository root):**
+From the repository root, install dependencies and start the Express server:
 
 ```bash
-node backend/test-backend.js
+npm install
+npm start
 ```
 
-No `npm install`, server, AWS account, or database is needed.
+Open http://localhost:3000 in Chrome. Do not open the HTML file directly: the form needs the server to reach the API.
+
+The browser sends checkout requests to the local Express API at `POST /api/checkouts`.
+
+To test the API, keep the server running and open a second terminal:
+
+```bash
+npm run test:api
+```
+
+To run the Week 8 backend tests (no server needed):
+
+```bash
+npm run test:backend
+```
+
+No AWS account or database is needed through Week 9. Approved checkouts are not permanently saved yet.
 
 ## Business rules
 
