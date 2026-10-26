@@ -44,8 +44,7 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 | `server/server.js` | Week 9 local Express server: serves the page and `POST /api/checkouts`. |
 | `server/test-api.js` | Week 9 HTTP tests against the running server. |
 | `package.json` | Express dependency and the `npm start` / `npm run test:*` commands. |
-| `docs/09-local-api/week9-api-testing.md` | Week 9 API, run instructions, end-to-end tests, and Network evidence. |
-
+| `docs/09-local-api/README.md` | Week 9 API, run instructions, end-to-end tests, and Network evidence. |
 
 ## How to run
 
@@ -102,4 +101,4 @@ npm run test:backend # Week 8 tests; no server needed
 - The page shows three outcomes: approved, rejected with the backend's reason, or "Cannot reach the ShelfLife server" when the server is stopped.
 - Nothing is saved yet. Storage starts in Week 11.
 
-Details, test results, and Network evidence: [`docs/09-local-api/week9-api-testing.md`](docs/09-local-api/week9-api-testing.md).
+Details, test results, and Network evidence: [Week 9 API documentation](docs/09-local-api/README.md).
