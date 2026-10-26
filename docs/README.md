@@ -9,4 +9,4 @@ Documents are grouped by course stage, in the order the project was built.
 | [03-system-design](03-system-design/) | Week 3 design checkpoint | [Workflow diagram](03-system-design/transaction-workflow-diagram.md), [Exception path](03-system-design/exception-path.md), [State transitions](03-system-design/state-transition-diagram.md), [Data dictionary](03-system-design/data-dictionary.md), [Architecture](03-system-design/architecture.md), [Responsibility matrix](03-system-design/responsibility-notes.md) |
 | [04-07-client-side](04-07-client-side/) | Weeks 4–7, Milestone 2 | [Browser test log](04-07-client-side/browser-test-log.md) |
 | [08-local-backend](08-local-backend/) | Week 8 | [Backend rules and test results](08-local-backend/week8-backend-testing.md) |
-| [09-local-api](09-local-api/) | Week 9 | [Local API, run instructions, and test results](09-local-api/week9-api-testing.md) |
+| [09-local-api](09-local-api/) | Week 9 | [Local API, run instructions, and test results](09-local-api/README.md) |
