@@ -76,7 +76,8 @@ function isBookAvailable(bookStatus) {
 function fail(message) {
   return {
     success: false,
-    message
+    message,
+    persisted: false
   };
 }
 
@@ -173,6 +174,7 @@ function processCheckout(checkout) {
   return {
     success: true,
     status: "Checked Out",
+    persisted: false, // no database until Week 11: nothing is saved
     checkoutPath,
     holdFulfilled,
     readerId,

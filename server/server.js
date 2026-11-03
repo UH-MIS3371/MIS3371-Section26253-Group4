@@ -22,7 +22,7 @@ app.use(express.json());
 // Serve the existing frontend files (styles.css, app.js) from src/.
 app.use(express.static(path.join(__dirname, "..", "src")));
 
-// Our page is named transaction-form.html, not index.html, so send it for "/".
+// Our page is named transaction-form.html, so send it for "/".
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "src", "transaction-form.html"));
 });
