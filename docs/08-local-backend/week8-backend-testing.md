@@ -103,3 +103,36 @@ The book status, hold reader, fines, and books already out are passed in with th
 ## Not in the Week 8 backend
 
 - **BR-6** (only one reader per physical book at a time) and **BR-7** (barcode or ISBN matches an existing book record) need stored book records, so they wait for the database weeks.
+
+## Post-feedback validation hardening
+
+The original 15 tests above are the Week 8 baseline. After the professor's review,
+`backend/test-backend.js` now contains **45 tests total** (30 additional cases).
+Run `npm run test:backend` from the project root.
+
+The backend **does not trust data types or values supplied by the form, API, or
+AWS Lambda event**. It now rejects:
+
+- Missing transactions (`null`, `undefined`), arrays and non-object bodies.
+- Non-text IDs, dates, book statuses, and hold reader IDs instead of silently converting
+  values such as `["R100"]` or `123` to text.
+- Boolean/array fines, negative amounts, hexadecimal or exponent strings,
+  fractional cents (for example `"9.999"` or `10.001`),
+  infinity, and amounts exceeding safe whole-cent representation.
+- Boolean, array, fractional, exponent-form and unsafe-integer book counts.
+
+**Valid browser inputs remain valid:** the form sends fines and counts as strings.
+Normal decimal amounts such as `"10.00"`, integer counts such as `"2"`,
+and the numeric value `0.29` are accepted. The original rules stay unchanged:
+exactly $10.00 is allowed, $10.01 is blocked; two existing loans permit a third;
+a due date may be 1–5 days after checkout. All invalid requests return
+`{ success: false, message, persisted: false }` with no generated checkout ID.
+
+The Express server passes the body to `processCheckout` even when it is missing
+or `null`. It also returns a structured HTTP 400 JSON response for malformed JSON.
+The Week 10 AWS Lambda adapter continues to call the **same** backend function;
+there is no separate set of checkout rules in the server or Lambda adapter.
+
+Run the HTTP integration checks with `npm start` and then `npm run test:api`
+in another terminal (15 scenarios). These are repeatable test definitions;
+the original result tables above describe the earlier baseline run.
