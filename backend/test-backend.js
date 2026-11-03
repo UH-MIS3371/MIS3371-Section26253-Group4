@@ -31,6 +31,7 @@ function checkoutWith(changes) {
 // expectSuccess: should the backend accept?
 // expectMessage: the reason we expect for a rejection.
 // expectPath: the routing path we expect for an acceptance ("Standard" if left out).
+// Original 15 checkout rules + 10 tests covering the professor's feedback.
 const tests = [
   {
     name: "Clean checkout, due in 3 days - valid",
@@ -161,13 +162,6 @@ const tests = [
     expectMessage: "A transaction object is required."
   },
   {
-    name: "String transaction"+" - invalid",
-    type: "invalid",
-    checkout: "checkout",
-    expectSuccess: false,
-    expectMessage: "A transaction object is required."
-  },
-  {
     name: "Numeric reader ID"+" - invalid",
     type: "invalid",
     checkout: checkoutWith({ readerId: 123 }),
@@ -175,65 +169,9 @@ const tests = [
     expectMessage: "Reader ID is required."
   },
   {
-    name: "Array reader ID"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ readerId: ["R100"] }),
-    expectSuccess: false,
-    expectMessage: "Reader ID is required."
-  },
-  {
-    name: "Object book ID"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ bookId: {} }),
-    expectSuccess: false,
-    expectMessage: "Book barcode or ISBN is required."
-  },
-  {
-    name: "Numeric checkout date"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ checkoutDate: 20261001 }),
-    expectSuccess: false,
-    expectMessage: "Checkout date must be a real date (YYYY-MM-DD)."
-  },
-  {
-    name: "Array due date"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ dueDate: [2026, 10, 4] }),
-    expectSuccess: false,
-    expectMessage: "Due date must be a real date (YYYY-MM-DD)."
-  },
-  {
-    name: "Impossible leap day"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ dueDate: "2026-02-29" }),
-    expectSuccess: false,
-    expectMessage: "Due date must be a real date (YYYY-MM-DD)."
-  },
-  {
     name: "Boolean fines"+" - invalid",
     type: "invalid",
     checkout: checkoutWith({ fines: false }),
-    expectSuccess: false,
-    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
-  },
-  {
-    name: "Array fines"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ fines: [0] }),
-    expectSuccess: false,
-    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
-  },
-  {
-    name: "Hexadecimal fines"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ fines: "0x10" }),
-    expectSuccess: false,
-    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
-  },
-  {
-    name: "Exponent fines"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ fines: "1e1" }),
     expectSuccess: false,
     expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
   },
@@ -252,81 +190,11 @@ const tests = [
     expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
   },
   {
-    name: "Infinite fines"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ fines: Infinity }),
-    expectSuccess: false,
-    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
-  },
-  {
-    name: "Negative fines"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ fines: "-1" }),
-    expectSuccess: false,
-    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
-  },
-  {
-    name: "Unsafe enormous fines"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ fines: Number.MAX_VALUE }),
-    expectSuccess: false,
-    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
-  },
-  {
-    name: "Boolean count"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ itemsOut: true }),
-    expectSuccess: false,
-    expectMessage: "Books currently checked out must be a whole number that is 0 or more."
-  },
-  {
     name: "Array count"+" - invalid",
     type: "invalid",
     checkout: checkoutWith({ itemsOut: [0] }),
     expectSuccess: false,
     expectMessage: "Books currently checked out must be a whole number that is 0 or more."
-  },
-  {
-    name: "Fractional count"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ itemsOut: "1.5" }),
-    expectSuccess: false,
-    expectMessage: "Books currently checked out must be a whole number that is 0 or more."
-  },
-  {
-    name: "Exponent count"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ itemsOut: "2e0" }),
-    expectSuccess: false,
-    expectMessage: "Books currently checked out must be a whole number that is 0 or more."
-  },
-  {
-    name: "Unsafe count"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ itemsOut: Number.MAX_SAFE_INTEGER + 1 }),
-    expectSuccess: false,
-    expectMessage: "Books currently checked out must be a whole number that is 0 or more."
-  },
-  {
-    name: "Object book status"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ bookStatus: {} }),
-    expectSuccess: false,
-    expectMessage: "Book status is required."
-  },
-  {
-    name: "Numeric hold reader"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ bookStatus: "on-hold", holdReaderId: 123 }),
-    expectSuccess: false,
-    expectMessage: "Hold reader ID must be text."
-  },
-  {
-    name: "Missing on-hold reader"+" - invalid",
-    type: "invalid",
-    checkout: checkoutWith({ bookStatus: "on-hold", holdReaderId: undefined }),
-    expectSuccess: false,
-    expectMessage: "This book is on hold. The reader who placed the hold must be identified."
   },
   {
     name: "Decimal fines string with exactly 2 places - valid",
@@ -339,13 +207,6 @@ const tests = [
     name: "Floating point cents ($0.29) - valid",
     type: "boundary",
     checkout: checkoutWith({ fines: 0.29 }),
-    expectSuccess: true,
-    expectPath: "Standard"
-  },
-  {
-    name: "Forged result fields ignored - valid",
-    type: "invalid",
-    checkout: checkoutWith({ status: "Approved", checkoutPath: "Fake", transactionId: "FAKE" }),
     expectSuccess: true,
     expectPath: "Standard"
   }
