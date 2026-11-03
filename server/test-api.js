@@ -35,7 +35,14 @@ const tests = [
   { name: "Due 6 days after checkout - rejected", type: "boundary", body: checkoutWith({ dueDate: "2026-10-07" }), expectStatus: 400, expectMessage: "Due date must be 1 to 5 calendar days after the checkout date." },
   { name: "Book on hold for another reader - rejected", type: "invalid", body: checkoutWith({ bookStatus: "on-hold", holdReaderId: "R200" }), expectStatus: 400, expectMessage: "Checkout blocked: this book is on hold for another reader." },
   { name: "3 books already out - rejected", type: "boundary", body: checkoutWith({ itemsOut: 3 }), expectStatus: 400, expectMessage: "Checkout blocked: checkout limit of 3 books reached." },
-  { name: "Reader ID missing - rejected", type: "invalid", body: checkoutWith({ readerId: "" }), expectStatus: 400, expectMessage: "Reader ID is required." }
+  { name: "Reader ID missing - rejected", type: "invalid", body: checkoutWith({ readerId: "" }), expectStatus: 400, expectMessage: "Reader ID is required." },
+  { name: "Missing transaction object (null) - rejected", type: "invalid", body: null, expectStatus: 400, expectMessage: "A transaction object is required." },
+  { name: "Array transaction - rejected", type: "invalid", body: [], expectStatus: 400, expectMessage: "A transaction object is required." },
+  { name: "Numeric reader ID - rejected", type: "invalid", body: checkoutWith({ readerId: 123 }), expectStatus: 400, expectMessage: "Reader ID is required." },
+  { name: "Fractional-cent fines - rejected", type: "invalid", body: checkoutWith({ fines: "10.001" }), expectStatus: 400, expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places." },
+  { name: "Boolean count - rejected", type: "invalid", body: checkoutWith({ itemsOut: true }), expectStatus: 400, expectMessage: "Books currently checked out must be a whole number that is 0 or more." },
+  { name: "Decimal fines from browser - accepted", type: "valid", body: checkoutWith({ fines: "10.00", itemsOut: "2" }), expectStatus: 200, expectPath: "Standard" },
+  { name: "Malformed JSON body - rejected", type: "invalid", rawBody: "{not-json", expectStatus: 400, expectMessage: "Request body must contain valid JSON." }
 ];
 
 async function runTests() {
@@ -46,7 +53,7 @@ async function runTests() {
     const response = await fetch(URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(test.body)
+      body: test.rawBody === undefined ? JSON.stringify(test.body) : test.rawBody
     });
     const result = await response.json();
 
