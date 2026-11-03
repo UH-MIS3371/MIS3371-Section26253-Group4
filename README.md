@@ -78,6 +78,21 @@ npm run test:backend
 
 No AWS account or database is needed through Week 9. Approved checkouts are not permanently saved yet.
 
+## Backend validation hardening (professor feedback)
+
+The backend independently rejects missing/non-object checkout requests, incorrect
+field types, and invalid monetary decimals (including fractional cents). Browser
+number inputs are still supported as normal decimal strings. The same
+`processCheckout()` handles Express and the Week 10 AWS Lambda adapter.
+
+- `npm run test:backend` — 45 backend scenarios, including the original 15.
+- `npm run test:api` — 15 HTTP scenarios (start `npm start` first).
+- See [backend validation addendum](docs/08-local-backend/week8-backend-testing.md#post-feedback-validation-hardening)
+  for the invalid-data cases and trust boundary.
+
+The browser remains a helpful first check; only backend validation determines
+whether a checkout is accepted. No database or persistent checkout is created.
+
 ## Business rules
 
 | Rule | Description | Browser (`app.js`) | Backend (`backend.js`) |
@@ -138,7 +153,7 @@ ShelfLife now runs as one complete local system: the HTML/CSS/JavaScript fronten
 | Requirement | Evidence |
 |---|---|
 | Frontend | `src/transaction-form.html`, `src/styles.css`, `src/app.js` |
-| Backend validations and rules | `backend/backend.js` (15 tests pass) |
+| Backend validations and rules | `backend/backend.js` (45 tests; original 15 preserved) |
 | Local Express server | `server/server.js`, `POST /api/checkouts` |
 | HTTP, JSON, `fetch()` | `src/app.js` → `handleSubmit()`; Network screenshots in `docs/09-local-api/` |
 | Successful, rejected, and error cases | API tests 8/8, form tests 9/9, direct API rejections 4/4, server-stopped message |
