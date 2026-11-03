@@ -1,0 +1,11 @@
+{
+  "readerId": "R100",
+  "bookId": "B1234",
+  "checkoutDate": "2026-10-01",
+  "dueDate": "2026-10-04",
+  "fines": "0",
+  "itemsOut": "0",
+  "bookStatus": "available",
+  "holdReaderId": "",
+  "notes": ""
+}

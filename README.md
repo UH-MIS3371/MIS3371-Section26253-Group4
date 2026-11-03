@@ -36,15 +36,16 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 |---|---|
 | `src/transaction-form.html` | Client-side checkout form with labeled fields and HTML validation. |
 | `src/styles.css` | Responsive styling and accessible focus states. |
-| `src/app.js` | Client-side business rules, event listeners, and validation messages. |
+| `src/app.js` | Client-side business rules, event listeners, validation messages, and (Week 9) the `fetch()` call that sends the checkout to the local API. |
 | `backend/backend.js` | Week 8 local backend transaction logic. |
 | `backend/test-backend.js` | Week 8 backend tests. |
+| `backend/json-demo.js` | Week 8 demo: a checkout object → JSON text → object again. |
 | `docs/` | All project documents, organized by course stage. Start at `docs/README.md`. |
 | `docs/08-local-backend/week8-backend-testing.md` | Week 8 rules, routing decision, expected vs actual test results. |
 | `docs/04-07-client-side/browser-test-log.md` | Milestone 2 browser boundary tests. |
-| `src/week9-api.js` | Week 9: sends the checkout to the local API with `fetch()` and shows the result. |
 | `server/server.js` | Week 9 local Express server: serves the page and `POST /api/checkouts`. |
 | `server/test-api.js` | Week 9 HTTP tests against the running server. |
+| `demo-requests/` | Sample accepted and rejected checkout JSON for sending with `curl`. |
 | `package.json` | Express dependency and the `npm start` / `npm run test:*` commands. |
 | `docs/09-local-api/README.md` | Week 9 API, run instructions, end-to-end tests, and Network evidence. |
 
@@ -115,8 +116,30 @@ npm run test:backend # Week 8 tests; no server needed
 ```
 
 - `server/server.js` only moves data; the business rules stay in `backend/backend.js`.
-- `src/week9-api.js` replaces the Week 7 demo submit handler with one that calls the API using `fetch()`. `app.js` is unchanged, so the live messages still work.
+- `src/app.js` keeps the Week 7 live messages and browser checks. Its submit handler now runs those checks and then sends the checkout to the API using `fetch()`.
 - The page shows three outcomes: approved, rejected with the backend's reason, or "Cannot reach the ShelfLife server" when the server is stopped.
 - Nothing is saved yet. Storage starts in Week 11.
 
+To send sample JSON straight to the API, keep the server running and use a second terminal (in PowerShell, type `curl.exe`, not `curl`):
+
+```bash
+curl.exe -i -X POST http://localhost:3000/api/checkouts -H "Content-Type: application/json" --data-binary "@demo-requests/accepted-checkout.json"
+curl.exe -i -X POST http://localhost:3000/api/checkouts -H "Content-Type: application/json" --data-binary "@demo-requests/rejected-fines-over-limit.json"
+```
+
+The first returns HTTP 200; the second returns HTTP 400 with "Checkout blocked: fine limit exceeded."
+
 Details, test results, and Network evidence: [Week 9 API documentation](docs/09-local-api/README.md).
+
+## Milestone 3 — Complete local transaction processing system
+
+ShelfLife now runs as one complete local system: the HTML/CSS/JavaScript frontend, the Week 8 backend rules, and the Express server that connects them with HTTP, JSON, and `fetch()`. AWS and a database are not part of Milestone 3.
+
+| Requirement | Evidence |
+|---|---|
+| Frontend | `src/transaction-form.html`, `src/styles.css`, `src/app.js` |
+| Backend validations and rules | `backend/backend.js` (15 tests pass) |
+| Local Express server | `server/server.js`, `POST /api/checkouts` |
+| HTTP, JSON, `fetch()` | `src/app.js` → `handleSubmit()`; Network screenshots in `docs/09-local-api/` |
+| Successful, rejected, and error cases | API tests 8/8, form tests 9/9, direct API rejections 4/4, server-stopped message |
+| Consistent fields and rules | Each HTML `name` equals its JSON key and backend property; same limits and rule order in browser and backend |

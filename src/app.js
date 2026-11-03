@@ -14,7 +14,8 @@ Each business rule has its own section below. Every section has the same parts:
                  (shows a message, puts the cursor on the field, returns false if it fails)
   4. LISTENER  - connects the page event to the message
   5. TESTS     - console tests, boundary cases marked
-The submit handler at the bottom just runs each BR's submit check in order.
+The submit handler at the bottom runs each BR's submit check in order, then
+(Week 9) sends the checkout to the local Express API with fetch() and shows its answer.
 */
 
 // =========================================================
@@ -377,23 +378,87 @@ console.log("5 out ->", exceedsItemLimit(5)); // true: already over, blocked
 
 
 // =========================================================
-// SUBMIT HANDLER: runs each BR's submit check in order
+// WEEK 9: SEND THE CHECKOUT TO OUR LOCAL EXPRESS API
+// The browser checks above give quick feedback. The backend (backend/backend.js)
+// checks everything again and makes the official decision.
+// Nothing is saved yet: there is no database until Week 11.
 // =========================================================
-function handleDemoCheckout(event) {
-  event.preventDefault(); // stay on this page; there is no backend yet
+const submitButton = document.querySelector('#checkout-form button[type="submit"]');
+
+// Show the API's answer. data-result lets the CSS color the stamp
+// (green for approved, red for rejected or connection problems).
+function showFormMessage(message, approved) {
+  formMessage.textContent = message;
+  formMessage.dataset.result = approved ? "approved" : "rejected";
+}
+
+// Read every form field into ONE checkout object.
+// The property names match what processCheckout() expects in backend/backend.js.
+function buildCheckout() {
+  return {
+    readerId: readerIdInput.value.trim(),
+    bookId: document.querySelector("#book-id").value.trim(),
+    checkoutDate: checkoutDateInput.value,
+    dueDate: dueDateInput.value,
+    fines: fineInput.value,
+    itemsOut: itemsOutInput.value,
+    bookStatus: bookStatusInput.value,
+    holdReaderId: holdReaderInput.value.trim(),
+    notes: document.querySelector("#notes").value.trim()
+  };
+}
+
+// =========================================================
+// SUBMIT HANDLER: runs each BR's submit check in order, then calls the API
+// async means this function can wait (await) for the server without freezing the page.
+// =========================================================
+async function handleSubmit(event) {
+  event.preventDefault(); // stay on this page; JavaScript sends the request instead
+  delete formMessage.dataset.result;
 
   // Each check shows its own message and focuses its own field if it fails.
-  // "return" stops here, so the checks below it do not run.
+  // "return" stops here, so the checks below it do not run and nothing is sent.
   if (!checkDueDateAtSubmit()) return;     // BR-5
   if (!checkFinesAtSubmit()) return;       // BR-1
   if (!checkItemsAtSubmit()) return;       // BR-4
   if (!checkHoldAtSubmit()) return;        // BR-3 (before BR-2: it decides what happens to On Hold books)
   if (!checkBookStatusAtSubmit()) return;  // BR-2
 
-  // All browser-side checks passed. This is NOT a saved checkout;
-  // the backend will make the official decision later.
-  formMessage.textContent = "Client-side checks passed. The system will confirm the checkout later.";
-  console.log("Checkout form submitted successfully.");
+  const checkout = buildCheckout();
+
+  submitButton.disabled = true; // prevent a double submit while we wait
+  formMessage.textContent = "Sending checkout to the local API..."; // neutral: no stamp color yet
+
+  try {
+    // fetch() sends an HTTP POST to our Express endpoint.
+    // JSON.stringify turns the object into JSON text for the request body.
+    const response = await fetch("/api/checkouts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(checkout)
+    });
+
+    // response.json() reads the JSON body back into a JavaScript object.
+    // response.ok is true for HTTP 200-299: 200 = approved, 400 = rejected by a rule.
+    const result = await response.json();
+    if (!response.ok || !result.success) {
+      showFormMessage("Checkout rejected by the system: " + result.message, false);
+      return;
+    }
+
+    showFormMessage(
+      "Checkout approved by the system (" + result.checkoutPath + " path). " +
+      "Transaction " + result.transactionId + ". Not saved yet.",
+      true
+    );
+  } catch (error) {
+    // fetch() itself failed: the server is stopped or unreachable.
+    // This is different from a rejection, which is a real answer from the backend.
+    showFormMessage("Cannot reach the ShelfLife server. Start it with npm start and try again.", false);
+    console.error(error);
+  } finally {
+    submitButton.disabled = false; // runs after success, rejection, or error
+  }
 }
 
-checkoutForm.addEventListener("submit", handleDemoCheckout);
+checkoutForm.addEventListener("submit", handleSubmit);
