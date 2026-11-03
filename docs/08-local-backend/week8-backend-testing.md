@@ -107,11 +107,12 @@ The book status, hold reader, fines, and books already out are passed in with th
 ## Post-feedback validation hardening
 
 The original 15 tests above are the Week 8 baseline. After the professor's review,
-`backend/test-backend.js` now contains **45 tests total** (30 additional cases).
+`backend/test-backend.js` now contains **25 tests total** (10 additional cases).
 Run `npm run test:backend` from the project root.
 
 The backend **does not trust data types or values supplied by the form, API, or
-AWS Lambda event**. It now rejects:
+AWS Lambda event**. The ten new tests focus on missing objects, unexpected types,
+decimal precision, and valid form inputs. The validation also rejects:
 
 - Missing transactions (`null`, `undefined`), arrays and non-object bodies.
 - Non-text IDs, dates, book statuses, and hold reader IDs instead of silently converting
