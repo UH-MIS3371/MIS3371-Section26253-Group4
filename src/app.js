@@ -427,12 +427,12 @@ async function handleSubmit(event) {
   const checkout = buildCheckout();
 
   submitButton.disabled = true; // prevent a double submit while we wait
-  formMessage.textContent = "Sending checkout to the local API..."; // neutral: no stamp color yet
+  formMessage.textContent = "Sending checkout to the ShelfLife API..."; // neutral: no stamp color yet
 
   try {
     // fetch() sends an HTTP POST to our Express endpoint.
     // JSON.stringify turns the object into JSON text for the request body.
-    const response = await fetch("/api/checkouts", {
+    const response = await fetch('https://923b4w7tec.execute-api.us-east-1.amazonaws.com/api/checkouts', {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(checkout)
@@ -454,7 +454,7 @@ async function handleSubmit(event) {
   } catch (error) {
     // fetch() itself failed: the server is stopped or unreachable.
     // This is different from a rejection, which is a real answer from the backend.
-    showFormMessage("Cannot reach the ShelfLife server. Start it with npm start and try again.", false);
+    showFormMessage("Cannot reach the ShelfLife API. Check your connection and try again.", false);
     console.error(error);
   } finally {
     submitButton.disabled = false; // runs after success, rejection, or error
