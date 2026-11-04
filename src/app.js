@@ -432,7 +432,7 @@ async function handleSubmit(event) {
   try {
     // fetch() sends an HTTP POST to our Express endpoint.
     // JSON.stringify turns the object into JSON text for the request body.
-    const response = await fetch('https://923b4w7tec.execute-api.us-east-1.amazonaws.com/api/checkouts', {
+    const response = await fetch("/api/checkouts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(checkout)
