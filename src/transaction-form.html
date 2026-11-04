@@ -6,8 +6,6 @@
   <title>Book Checkout | ShelfLife</title>
   <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
-    <!-- Week 9: sends the checkout to the local API. Must load after app.js. -->
-  <script src="week9-api.js" defer></script>
 </head>
 <body>
   <div class="page-shell">
@@ -25,11 +23,7 @@
       process a reader's checkout request.
     </p>
     <p>
-      For this classroom prototype, staff manually enter
-      sample reader information, book information, and
-      account details. These values are not automatically
-      retrieved from library records yet.
-    </p>
+      Ask the reader for their reader ID and the book's barcode or ISBN. Look up the reader's fines and books checked out, and the book's status and hold, in the library system.    </p>
   </section>
 
 
@@ -41,18 +35,18 @@
 
             <div class="form-group">
             <label for="reader-id">Reader ID (required)</label><br>
-            <input type="text" id="reader-id" name="reader-id" required pattern=".*\S.*" title="Enter a reader ID, not just spaces.">
+            <input type="text" id="reader-id" name="readerId" required pattern=".*\S.*" title="Enter a reader ID, not just spaces.">
           </div>
 
           <div class="form-group">
             <label for="book-id">Book Barcode or ISBN (required)</label><br>
-            <input type="text" id="book-id" name="book-id" required pattern=".*\S.*" title="Enter a book barcode or ISBN, not just spaces.">
+            <input type="text" id="book-id" name="bookId" required pattern=".*\S.*" title="Enter a book barcode or ISBN, not just spaces.">
           </div>
 
           <div class="form-row">
           <div class="form-group">
             <label for="checkout-date">Requested Checkout Date (required)</label>
-            <input type="date" id="checkout-date" name="checkout-date" required>
+            <input type="date" id="checkout-date" name="checkoutDate" required>
           </div>
 
           <div class="form-group">
@@ -64,7 +58,7 @@
 
         <div class="form-group">
           <label for="fineInput">Outstanding Fines $ (required)</label><br>
-          <input type="number" id="fineInput" name="fineInput" min="0" step="0.01" required>
+          <input type="number" id="fineInput" name="fines" min="0" step="0.01" required>
           <p id="fineMessage" aria-live="polite"></p>
         </div>
 

@@ -159,3 +159,17 @@ In DevTools → **Network**, click the `checkouts` request after a clean checkou
 | 404 on `/api/checkouts` | Wrong method or path | The form must `POST` to `/api/checkouts` |
 | Page has no styles | Page opened as `file://` | Open http://localhost:3000 instead |
 | "Client-side checks passed…" appears | The Week 7 demo handler is still active | Make sure `week9-api.js` loads after `app.js` |
+
+## Post-feedback API robustness tests
+
+The original eight HTTP results in the table above remain the Week 9 baseline.
+The expanded `server/test-api.js` now defines **15** scenarios, including
+null and array transactions, a numeric reader ID, fractional-cent fines, a
+boolean loan count, valid browser-style decimal strings, and malformed JSON.
+They verify HTTP 400 with structured `success: false` responses (and HTTP 200
+for valid requests) even when someone bypasses the form.
+
+The Express adapter parses JSON and passes it to `processCheckout`, which owns
+field validation and the five existing business rules. `persisted: false`
+means neither accepted nor rejected requests are saved. To execute this updated
+suite, start the server with `npm start`, then run `npm run test:api`.

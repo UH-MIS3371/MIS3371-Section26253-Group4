@@ -31,6 +31,7 @@ function checkoutWith(changes) {
 // expectSuccess: should the backend accept?
 // expectMessage: the reason we expect for a rejection.
 // expectPath: the routing path we expect for an acceptance ("Standard" if left out).
+// Original 15 checkout rules + 10 tests covering the professor's feedback.
 const tests = [
   {
     name: "Clean checkout, due in 3 days - valid",
@@ -138,6 +139,76 @@ const tests = [
     checkout: checkoutWith({ itemsOut: "" }),
     expectSuccess: false,
     expectMessage: "Books currently checked out must be a whole number that is 0 or more."
+  },
+  {
+    name: "Null transaction"+" - invalid",
+    type: "invalid",
+    checkout: null,
+    expectSuccess: false,
+    expectMessage: "A transaction object is required."
+  },
+  {
+    name: "Undefined transaction"+" - invalid",
+    type: "invalid",
+    checkout: undefined,
+    expectSuccess: false,
+    expectMessage: "A transaction object is required."
+  },
+  {
+    name: "Array transaction"+" - invalid",
+    type: "invalid",
+    checkout: [],
+    expectSuccess: false,
+    expectMessage: "A transaction object is required."
+  },
+  {
+    name: "Numeric reader ID"+" - invalid",
+    type: "invalid",
+    checkout: checkoutWith({ readerId: 123 }),
+    expectSuccess: false,
+    expectMessage: "Reader ID is required."
+  },
+  {
+    name: "Boolean fines"+" - invalid",
+    type: "invalid",
+    checkout: checkoutWith({ fines: false }),
+    expectSuccess: false,
+    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
+  },
+  {
+    name: "Fractional cent string"+" - invalid",
+    type: "invalid",
+    checkout: checkoutWith({ fines: "9.999" }),
+    expectSuccess: false,
+    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
+  },
+  {
+    name: "Fractional cent number"+" - invalid",
+    type: "invalid",
+    checkout: checkoutWith({ fines: 10.001 }),
+    expectSuccess: false,
+    expectMessage: "Fines must be a nonnegative amount with at most 2 decimal places."
+  },
+  {
+    name: "Array count"+" - invalid",
+    type: "invalid",
+    checkout: checkoutWith({ itemsOut: [0] }),
+    expectSuccess: false,
+    expectMessage: "Books currently checked out must be a whole number that is 0 or more."
+  },
+  {
+    name: "Decimal fines string with exactly 2 places - valid",
+    type: "boundary",
+    checkout: checkoutWith({ fines: "10.00", itemsOut: "2" }),
+    expectSuccess: true,
+    expectPath: "Standard"
+  },
+  {
+    name: "Floating point cents ($0.29) - valid",
+    type: "boundary",
+    checkout: checkoutWith({ fines: 0.29 }),
+    expectSuccess: true,
+    expectPath: "Standard"
   }
 ];
 
@@ -154,7 +225,17 @@ for (const test of tests) {
     testPassed = result.message === test.expectMessage;
   }
   if (testPassed && test.expectSuccess) {
-    testPassed = result.status === "Checked Out" && result.checkoutPath === expectedPath;
+    testPassed = result.status === "Checked Out" && result.checkoutPath === expectedPath &&
+                 result.persisted === false;
+    // Server-generated outputs must never be copied from the request.
+    if (test.name.startsWith("Forged result fields")) {
+      testPassed = testPassed && result.transactionId !== "FAKE";
+    }
+  }
+  if (testPassed && !test.expectSuccess) {
+    testPassed = result.persisted === false &&
+                 !Object.hasOwn(result, "checkoutPath") &&
+                 !Object.hasOwn(result, "transactionId");
   }
 
   console.log(`Type:     ${test.type}`);

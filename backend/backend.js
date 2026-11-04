@@ -40,7 +40,7 @@ function addDays(dateString, days) {
 // A real date in YYYY-MM-DD form. The round trip rejects impossible dates:
 // "2026-02-31" becomes "2026-03-03", which no longer matches.
 function isRealDate(dateString) {
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
+  if (typeof dateString !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(dateString)) {
     return false;
   }
   return formatDate(new Date(dateString + "T00:00:00")) === dateString;
@@ -72,11 +72,38 @@ function isBookAvailable(bookStatus) {
   return bookStatus === "available";
 }
 
+// Browser number inputs arrive as strings, but direct API/Lambda callers can send
+// other types. Accept only ordinary decimal numbers and enforce whole cents.
+function parseFineCents(value) {
+  if (typeof value !== "number" && typeof value !== "string") return null;
+  if (typeof value === "string" &&
+      !/^(?:\d+(?:\.\d{1,2})?|\.\d{1,2})$/.test(value.trim())) {
+    return null; // Reject blank, negative, hex, exponent, and >2 decimal places.
+  }
+  const amount = Number(value);
+  const unroundedCents = amount * 100;
+  const cents = Math.round(unroundedCents);
+  // Tolerance allows representation errors such as 0.29 * 100.
+  if (!Number.isFinite(amount) || amount < 0 ||
+      !Number.isSafeInteger(cents) ||
+      Math.abs(unroundedCents - cents) > 1e-7) return null;
+  return cents;
+}
+
+// Whole, nonnegative book counts only. No booleans, arrays, or "2e0".
+function parseItemsOut(value) {
+  if (typeof value !== "number" && typeof value !== "string") return null;
+  if (typeof value === "string" && !/^\d+$/.test(value.trim())) return null;
+  const count = Number(value);
+  return Number.isSafeInteger(count) && count >= 0 ? count : null;
+}
+
 // One reusable shape for an unsuccessful result.
 function fail(message) {
   return {
     success: false,
-    message
+    message,
+    persisted: false
   };
 }
 
@@ -95,48 +122,57 @@ function createTransactionId() {
  * @returns {object} Decision/result, NOT a transaction saved to a database.
  */
 function processCheckout(checkout) {
-  // STEP 1: Read incoming fields. Do not assume browser validation happened.
-  const readerId = String(checkout.readerId || "").trim();
-  const bookId = String(checkout.bookId || "").trim();
-  const checkoutDate = String(checkout.checkoutDate || "").trim();
-  const dueDate = String(checkout.dueDate || "").trim();
-  const bookStatus = String(checkout.bookStatus || "").trim();
-  const holdReaderId = String(checkout.holdReaderId || "").trim();
-  const finesText = String(checkout.fines === undefined || checkout.fines === null ? "" : checkout.fines).trim();
-  const fines = Number(finesText);
-  const itemsOutText = String(checkout.itemsOut === undefined || checkout.itemsOut === null ? "" : checkout.itemsOut).trim();
-  const itemsOut = Number(itemsOutText);
+  // STEP 1: Reject missing or malformed transactions before reading fields.
+  // Never depend on browser checks: callers can POST JSON directly.
+  if (checkout === null || typeof checkout !== "object" || Array.isArray(checkout)) {
+    return fail("A transaction object is required.");
+  }
 
-  // STEP 2: Validate the data before applying business rules.
-  if (!readerId) {
+  // STEP 2: Validate types and values before applying checkout rules.
+  // Avoid String(x) and Number(x) coercion: e.g. [0] or false must not
+  // become a valid fine or book count.
+  if (typeof checkout.readerId !== "string" || !checkout.readerId.trim()) {
     return fail("Reader ID is required.");
   }
+  const readerId = checkout.readerId.trim();
 
-  if (!bookId) {
+  if (typeof checkout.bookId !== "string" || !checkout.bookId.trim()) {
     return fail("Book barcode or ISBN is required.");
   }
+  const bookId = checkout.bookId.trim();
 
-  if (!isRealDate(checkoutDate)) {
+  if (!isRealDate(checkout.checkoutDate)) {
     return fail("Checkout date must be a real date (YYYY-MM-DD).");
   }
+  const checkoutDate = checkout.checkoutDate;
 
-  if (!isRealDate(dueDate)) {
+  if (!isRealDate(checkout.dueDate)) {
     return fail("Due date must be a real date (YYYY-MM-DD).");
   }
+  const dueDate = checkout.dueDate;
 
-  // finesText is checked too because Number("") is 0, which would hide a missing amount.
-  if (finesText === "" || !Number.isFinite(fines) || fines < 0) {
-    return fail("Fines must be a number that is 0 or more.");
+  const finesCents = parseFineCents(checkout.fines);
+  if (finesCents === null) {
+    return fail("Fines must be a nonnegative amount with at most 2 decimal places.");
   }
+  const fines = finesCents / 100;
 
-  // A count of books must be a whole number: 2.5 books or -1 books makes no sense.
-  if (itemsOutText === "" || !Number.isInteger(itemsOut) || itemsOut < 0) {
+  const itemsOut = parseItemsOut(checkout.itemsOut);
+  if (itemsOut === null) {
     return fail("Books currently checked out must be a whole number that is 0 or more.");
   }
 
-  if (!bookStatus) {
+  if (typeof checkout.bookStatus !== "string" || !checkout.bookStatus.trim()) {
     return fail("Book status is required.");
   }
+  const bookStatus = checkout.bookStatus.trim();
+
+  // The hold reader is optional for Available books, but must be text if sent.
+  if (checkout.holdReaderId !== undefined &&
+      typeof checkout.holdReaderId !== "string") {
+    return fail("Hold reader ID must be text.");
+  }
+  const holdReaderId = (checkout.holdReaderId || "").trim();
 
   // STEP 3: Apply the business rules, in the same order as the frontend submit gate.
   if (!dueDateWithinLoanLimit(checkoutDate, dueDate)) {
@@ -173,6 +209,7 @@ function processCheckout(checkout) {
   return {
     success: true,
     status: "Checked Out",
+    persisted: false, // no database until Week 11: nothing is saved
     checkoutPath,
     holdFulfilled,
     readerId,

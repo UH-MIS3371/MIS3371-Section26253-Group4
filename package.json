@@ -1,6 +1,7 @@
 {
   "name": "team-4-tps-repo",
   "version": "1.0.0",
+  "private": true,
   "description": "MIS 3371 Transaction Processing Systems I — Team 4",
   "main": "index.js",
   "directories": {
@@ -9,7 +10,8 @@
   "scripts": {
     "start": "node server/server.js",
     "test:backend": "node backend/test-backend.js",
-    "test:api": "node server/test-api.js"
+    "test:api": "node server/test-api.js",
+    "demo:json": "node backend/json-demo.js"
   },
   "repository": {
     "type": "git",

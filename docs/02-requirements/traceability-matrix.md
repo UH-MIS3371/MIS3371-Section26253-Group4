@@ -73,7 +73,7 @@ These are the places where the built system does not yet match the design, and t
 |---|---|---|---|
 | BR-6 and BR-7 | Checked against stored records | No stored records yet | Week 11 (DynamoDB) |
 | FR-13, US-5, US-7 overrides | Clerk can override a blocked checkout | Not built | Outside the required course scope |
-| Fines, status, hold, books out | Data dictionary: looked up from stored records (`fineBalanceAtCheck`, `itemStatusAtCheck`, `heldForOtherReader`, `activeLoansAtCheck`) | Entered on the form | Looked up by the backend once records exist (Week 11) |
+| Fines, status, hold, books out | Data dictionary: looked up from stored records (`fineBalanceAtCheck`, `itemStatusAtCheck`, `heldForOtherReader`, `activeLoansAtCheck`) | Entered on the form by a circulation clerk, copied from the library system | Week 11: the backend looks them up from DynamoDB and the four fields are removed from the form |
 
 ### Resolved
 
