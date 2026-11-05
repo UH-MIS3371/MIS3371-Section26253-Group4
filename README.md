@@ -10,7 +10,9 @@ The system validates checkout requests and displays approval or rejection messag
 
 **Event:** A reader requests to check out one physical book.
 
-**Inputs:** Reader ID, book barcode or ISBN, requested checkout date, due date.
+**Who uses the form:** a circulation desk clerk, on behalf of the reader.
+
+**Inputs:** Reader ID, book barcode or ISBN, requested checkout date, due date. Until the database is added in Week 11, the clerk also enters the reader's fines and books checked out, and the book's status and hold owner, copied from the library system. From Week 11 the backend looks these up itself.
 
 **System action:** Check the reader's fines, the book's availability, and the checkout limit; assign a status.
 
