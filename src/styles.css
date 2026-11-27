@@ -535,3 +535,31 @@ button:focus-visible {
     width: 100%;
   }
 }
+
+/* Retrieval panel */
+.retrieval-section {
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 4px double var(--red-rule);
+}
+.retrieval-section h2 {
+  font-family: var(--font-label);
+  color: var(--burgundy);
+}
+#retrieve-message {
+  margin-top: 18px;
+  font-family: var(--font-label);
+  color: var(--stamp-green);
+}
+#retrieve-message:empty { display: none; }
+#retrieve-result {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--card-light);
+  border: 2px solid var(--brass-dark);
+  color: var(--ink);
+  font-family: var(--font-text);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+#retrieve-result[hidden] { display: none; }

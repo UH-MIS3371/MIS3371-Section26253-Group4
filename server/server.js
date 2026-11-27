@@ -24,7 +24,7 @@ app.use(express.json({ limit: "20kb", strict: false }));
 app.use(express.static(path.join(__dirname, "..", "src")));
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "src", "transaction-form.html"));
+  res.sendFile(path.join(__dirname, "..", "src", "index.html"));
 });
 
 app.post("/api/checkouts", (req, res) => {
