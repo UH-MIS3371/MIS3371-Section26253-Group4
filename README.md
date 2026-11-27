@@ -2,9 +2,9 @@
 
 MIS 3371 Transaction Processing Systems I — Team 4
 
-ShelfLife is a library book checkout system developed for MIS 3371. The project includes a responsive client-side application (Milestone 2), local backend validation (Week 8), and an Express API that connects the frontend to the backend using HTTP and JSON (Week 9).
+ShelfLife is a library book checkout system developed for MIS 3371. The project includes a responsive client-side application (Milestone 2), local backend validation (Week 8), an Express API that connects the frontend to the backend using HTTP and JSON (Week 9), and an AWS Lambda + DynamoDB backend that saves approved checkouts to a live database (Week 11).
 
-The system validates checkout requests and displays approval or rejection messages. Transactions are not permanently saved yet.
+The system validates checkout requests, displays approval or rejection messages, and permanently saves approved transactions to DynamoDB. Saved transactions can be retrieved by confirmation number.
 
 ## The transaction
 
@@ -16,7 +16,7 @@ The system validates checkout requests and displays approval or rejection messag
 
 **Outcome:** Approve and check out, or reject with the specific reason (fines owed, book unavailable, hold for another reader, limit reached).
 
-**Official record (later weeks):** Checkout ID, Reader ID, book, checkout date, due date, status, timestamps.
+**Official record:** Confirmation number, Reader ID, book, checkout date, due date, checkout path, timestamp — saved to DynamoDB on approval.
 
 ## Team and roles
 
@@ -34,22 +34,23 @@ Roles set the lead for each area. Everyone contributes to the shared files, and 
 
 | File | What it is |
 |---|---|
-| `src/transaction-form.html` | Client-side checkout form with labeled fields and HTML validation. |
+| `src/index.html` | Client-side checkout form with labeled fields, HTML validation, and a retrieval panel for looking up saved transactions. |
 | `src/styles.css` | Responsive styling and accessible focus states. |
-| `src/app.js` | Client-side business rules, event listeners, validation messages, and (Week 9) the `fetch()` call that sends the checkout to the local API. |
-| `backend/backend.js` | Week 8 local backend transaction logic. |
+| `src/app.js` | Client-side business rules, event listeners, validation messages, the `fetch()` call that sends the checkout to AWS API Gateway, and the retrieval panel logic. |
+| `backend/backend.js` | Week 8 local backend transaction logic. The single authority for all business rules — used by both the local Express server and AWS Lambda. |
 | `backend/test-backend.js` | Week 8 backend tests. |
 | `backend/json-demo.js` | Week 8 demo: a checkout object → JSON text → object again. |
+| `index.js` | AWS Lambda handler. Translates API Gateway HTTP events into `processCheckout()` calls, saves approved checkouts to DynamoDB, and handles retrieval by confirmation number. |
+| `server/server.js` | Week 9 local Express server: serves the page and `POST /api/checkouts`. |
+| `server/test-api.js` | Week 9 HTTP tests against the running server. |
 | `docs/` | All project documents, organized by course stage. Start at `docs/README.md`. |
 | `docs/08-local-backend/week8-backend-testing.md` | Week 8 rules, routing decision, expected vs actual test results. |
 | `docs/04-07-client-side/browser-test-log.md` | Milestone 2 browser boundary tests. |
-| `server/server.js` | Week 9 local Express server: serves the page and `POST /api/checkouts`. |
-| `server/test-api.js` | Week 9 HTTP tests against the running server. |
 | `demo-requests/` | Sample accepted and rejected checkout JSON for sending with `curl`. |
 | `package.json` | Express dependency and the `npm start` / `npm run test:*` commands. |
 | `docs/09-local-api/README.md` | Week 9 API, run instructions, end-to-end tests, and Network evidence. |
 
-## How to run
+## How to run (local)
 
 ShelfLife requires Node.js version 18 or newer.
 
@@ -76,14 +77,55 @@ To run the Week 8 backend tests (no server needed):
 npm run test:backend
 ```
 
-No AWS account or database is needed through Week 9. Approved checkouts are not permanently saved yet.
+## AWS deployment
+
+The live application runs on AWS. The frontend is served from S3/CloudFront. The backend runs as an AWS Lambda function behind API Gateway.
+
+**Live API endpoint:** `https://lcfbvhd5c5.execute-api.us-east-1.amazonaws.com/api/checkouts`
+
+**Supported routes:**
+
+| Method | Route | Description |
+|---|---|---|
+| `POST` | `/api/checkouts` | Submit a checkout request. Approved checkouts are saved to DynamoDB. |
+| `GET` | `/api/checkouts/{confirmationNumber}` | Retrieve a saved transaction by confirmation number. |
+| `OPTIONS` | `/api/checkouts` | CORS preflight — handled automatically. |
+
+**Lambda handler:** `index.handler` (defined in `index.js` at the project root).
+
+**DynamoDB table:** Set via the `TABLE_NAME` environment variable in Lambda. The table uses `confirmationNumber` as the partition key. Each saved item stores: `confirmationNumber`, `readerId`, `bookId`, `checkoutDate`, `dueDate`, `checkoutPath`, `checkedOutAt`.
+
+**Confirmation numbers** are generated by `backend.js` in the format `CHK-{timestamp}-{sequence}`. After a successful save, the response includes both `transactionId` and `confirmationNumber` (same value) so they can be used to retrieve the transaction.
+
+**Data flow (live):**
+
+```
+Browser form
+  → fetch() POST JSON
+  → API Gateway
+  → Lambda (index.js)
+  → processCheckout() in backend/backend.js
+  → approved: PutItem to DynamoDB → 200 response with confirmationNumber
+  → rejected: 400 response with reason message
+```
+
+**Retrieval flow:**
+
+```
+Retrieval panel (confirmation number input)
+  → fetch() GET /api/checkouts/{confirmationNumber}
+  → API Gateway
+  → Lambda (index.js)
+  → GetItem from DynamoDB
+  → 200 response with transaction details, or 404 if not found
+```
 
 ## Backend validation hardening (professor feedback)
 
 The backend independently rejects missing/non-object checkout requests, incorrect
 field types, and invalid monetary decimals (including fractional cents). Browser
 number inputs are still supported as normal decimal strings. The same
-`processCheckout()` handles Express and the Week 10 AWS Lambda adapter.
+`processCheckout()` handles Express and the AWS Lambda adapter.
 
 - `npm run test:backend` — 25 backend scenarios, including the original 15.
 - `npm run test:api` — 15 HTTP scenarios (start `npm start` first).
@@ -91,7 +133,7 @@ number inputs are still supported as normal decimal strings. The same
   for the invalid-data cases and trust boundary.
 
 The browser remains a helpful first check; only backend validation determines
-whether a checkout is accepted. No database or persistent checkout is created.
+whether a checkout is accepted.
 
 ## Business rules
 
@@ -133,7 +175,6 @@ npm run test:backend # Week 8 tests; no server needed
 - `server/server.js` only moves data; the business rules stay in `backend/backend.js`.
 - `src/app.js` keeps the Week 7 live messages and browser checks. Its submit handler now runs those checks and then sends the checkout to the API using `fetch()`.
 - The page shows three outcomes: approved, rejected with the backend's reason, or "Cannot reach the ShelfLife server" when the server is stopped.
-- Nothing is saved yet. Storage starts in Week 11.
 
 To send sample JSON straight to the API, keep the server running and use a second terminal (in PowerShell, type `curl.exe`, not `curl`):
 
@@ -146,13 +187,24 @@ The first returns HTTP 200; the second returns HTTP 400 with "Checkout blocked: 
 
 Details, test results, and Network evidence: [Week 9 API documentation](docs/09-local-api/README.md).
 
+## Week 11 — AWS Lambda + DynamoDB
+
+ShelfLife now runs on AWS. The same `backend/backend.js` business rules are reused unchanged inside Lambda. Approved checkouts are permanently saved to DynamoDB and can be retrieved by confirmation number.
+
+- `index.js` is the Lambda handler (entry point: `index.handler`).
+- `backend/backend.js` is the single authority for all validation and business rules — unchanged from Week 8.
+- Approved checkouts are saved with `PutItemCommand` (with `ConditionExpression` to prevent duplicate confirmation numbers).
+- Saved transactions are retrieved with `GetItemCommand` using `ConsistentRead: true`.
+- CORS headers are included in every response so the browser frontend can call the API directly.
+- The page shows the confirmation number and "Saved to DynamoDB" on approval, or a specific error if saving failed.
+
 ## Milestone 3 — Complete local transaction processing system
 
-ShelfLife now runs as one complete local system: the HTML/CSS/JavaScript frontend, the Week 8 backend rules, and the Express server that connects them with HTTP, JSON, and `fetch()`. AWS and a database are not part of Milestone 3.
+ShelfLife now runs as one complete local system: the HTML/CSS/JavaScript frontend, the Week 8 backend rules, and the Express server that connects them with HTTP, JSON, and `fetch()`.
 
 | Requirement | Evidence |
 |---|---|
-| Frontend | `src/transaction-form.html`, `src/styles.css`, `src/app.js` |
+| Frontend | `src/index.html`, `src/styles.css`, `src/app.js` |
 | Backend validations and rules | `backend/backend.js` (25 tests; original 15 preserved) |
 | Local Express server | `server/server.js`, `POST /api/checkouts` |
 | HTTP, JSON, `fetch()` | `src/app.js` → `handleSubmit()`; Network screenshots in `docs/09-local-api/` |
